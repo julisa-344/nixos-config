@@ -1,65 +1,25 @@
 # ~/nixos-config/users/julisa/home.nix
-{ pkgs, config, lib, ... }: # Added config and lib for more advanced usage
+{ config, pkgs, lib, pkgsUnstable, blesh, ... }: # These arguments are made available by Home Manager
 
 {
-  # Home Manager needs a bit of information about you and the paths it should
-  # manage.
-  home.username = "julisa"; # Replace with your username
-  home.homeDirectory = "/home/julisa"; # Replace with your home directory
+  home.username = "julisa";
+  home.homeDirectory = "/home/julisa";
 
-  # This value determines the Home Manager release that your configuration is
-  # compatible with. This helps avoid breakage when a new Home Manager release
-  # introduces backwards incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "23.11"; # Set to your Home Manager version (usually matches NixOS)
+  # IMPORTANT: This should match your NixOS/Home Manager version (e.g., "24.05")
+  # The dotfiles flake used 24.05, so we'll assume that for now.
+  home.stateVersion = "24.05";
 
-  # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
+  # Allow unfree packages, as the original dotfiles' home.nix had this.
+  nixpkgs.config.allowUnfreePredicate = pkg: true;
 
-  # Packages to install in your user profile.
-  home.packages = with pkgs; [
-    htop
-    neovim
-    # Add user-specific packages here, e.g., neovim, specific development tools
+  imports = [
+    # This will point to the modules you're about to copy from ./dotfiles/modules
+    ./modules/default.nix
   ];
 
-  # Basic configuration of git
-  programs.git = {
-    enable = true;
-    userName = "Julisa 344";
-    userEmail = "julisa.leon344@gmail.com";
-  };
-
-  # Example: Zsh configuration
-  programs.zsh = {
-    enable = true;
-    # ohMyZsh.enable = true; # If you want Oh My Zsh
-    # Add other zsh configurations here
-  };
-  
-  # Example: i3 configuration snippet within home-manager
-  # You can manage your i3 config file this way
-  # home.file.".config/i3/config".source = ./i3-config; 
-  # Or directly define it:
-  # xsession.windowManager.i3.config = {
-  #   modifier = "Mod4"; # Super key
-  #   terminal = "alacritty"; # Or your preferred terminal
-  #   # ... other i3 settings
-  # };
-
-
-  # You can also manage dotfiles by symlinking them. For example:
-  # home.file.".bashrc".source = ./dotfiles/bashrc;
-  # home.file.".vimrc".source = ./dotfiles/vimrc;
-
-  # You can also manage files directly
-  # home.file.".config/mycustomapp/config.json".text = '''
-  # {
-  #   "setting": "value"
-  # }
-  # ''';
+  # Note: pkgsUnstable and blesh are available here if they are passed as
+  # extraSpecialArgs from your main NixOS configuration (flake.nix).
+  # The modules within ./modules might use them.
 }

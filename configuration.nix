@@ -1,6 +1,14 @@
 # ~/nixos-config/configuration.nix
 { config, pkgs, lib, ... }: # Added lib for later use if needed
 
+let
+  homeManagerPath = builtins.fetchTarball {
+    url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz"; # Asegúrate de que coincida con tu canal
+    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; # Reemplaza con el SHA256 correcto
+  };
+  homeManagerNixOSModule = import (homeManagerPath + "/nixos");
+in
+
 {
   imports =
     [ 
@@ -15,8 +23,19 @@
   # boot.loader.grub.enable = true; # Example for GRUB
   # boot.loader.grub.device = "/dev/sdX"; # Or "nodev" for EFI
 
-  # Home manager
-  home-manager.users.julisa = import ./users/julisa/home.nix;
+  programs.home-manager.enable = true;
+
+  home-manager.users.julisa =
+    let
+      pkgsUnstable = import <nixpkgs-unstable> { system = config.system.platform; };
+    in
+    import ./users/julisa/home.nix {
+      config = config;
+      pkgs = pkgs;
+      lib = lib;
+      pkgsUnstable = pkgsUnstable;
+      blesh = null; # Si no estás usando 'blesh', puedes dejarlo como null o removerlo de home.nix
+    };
 
   networking.hostName = "julixos"; # Define your desired hostname
   networking.networkmanager.enable = true;
@@ -64,6 +83,7 @@
       dmenu   # Application launcher for i3
       i3status # Status bar for i3
       i3lock  # Screen locker for i3
+      htop
       zsh
       # Add other essential system-wide packages for the user here
     ];
