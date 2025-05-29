@@ -2,19 +2,20 @@
 { config, pkgs, lib, ... }: # Added lib for later use if needed
 
 let
-  homeManagerPath = builtins.fetchTarball {
-    url = "https://github.com/nix-community/home-manager/archive/release-24.05.tar.gz"; # Asegúrate de que coincida con tu canal
-    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; # Reemplaza con el SHA256 correcto
+  unstableTarball = fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
   };
-  homeManagerNixOSModule = import (homeManagerPath + "/nixos");
+  pkgsUnstable = import unstableTarball { config = config.nixpkgs.config; };
 in
 
 {
   imports =
-    [ 
-      ./hardware-configuration.nix 
-      <home-manager/nixos> # home-manager, duh
+    [    
+      ./hardware-configuration.nix
+      <home-manager/nixos>
     ];
+ 
+  _module.args.pkgsUnstable = pkgsUnstable;
   programs.zsh.enable = true;
 
   # Bootloader (ensure this matches your hardware/preference)
@@ -23,19 +24,13 @@ in
   # boot.loader.grub.enable = true; # Example for GRUB
   # boot.loader.grub.device = "/dev/sdX"; # Or "nodev" for EFI
 
-  programs.home-manager.enable = true;
-
-  home-manager.users.julisa =
-    let
-      pkgsUnstable = import <nixpkgs-unstable> { system = config.system.platform; };
-    in
-    import ./users/julisa/home.nix {
-      config = config;
-      pkgs = pkgs;
-      lib = lib;
-      pkgsUnstable = pkgsUnstable;
-      blesh = null; # Si no estás usando 'blesh', puedes dejarlo como null o removerlo de home.nix
+  # programs.home-manager.enable = true;
+  home-manager = {
+    users.julisa = import ./users/julisa/home.nix {
+      inherit config pkgs lib pkgsUnstable;
+      blesh = null;
     };
+  };
 
   networking.hostName = "julixos"; # Define your desired hostname
   networking.networkmanager.enable = true;
@@ -80,7 +75,7 @@ in
       alacritty
       firefox
       i3-gaps # For i3 window manager
-      dmenu   # Application launcher for i3
+      dmenu   # aaApplication launcher for i3
       i3status # Status bar for i3
       i3lock  # Screen locker for i3
       htop
