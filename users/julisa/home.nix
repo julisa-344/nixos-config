@@ -1,5 +1,5 @@
 # ~/nixos-config/users/julisa/home.nix
-{ config, pkgs, lib, pkgsUnstable, blesh, ... }: # These arguments are made available by Home Manager
+{ config, pkgs, lib, pkgsUnstable, blesh, ... }: # Arguments provided by Home Manager and extraSpecialArgs
 
 {
   home.username = "julisa";
@@ -17,7 +17,7 @@
     ./modules/app.nix
   ];
 
-  # Note: pkgsUnstable and blesh are available here if they are passed as
-  # extraSpecialArgs from your main NixOS configuration.
-  # The modules within ./modules might use them.
+  # Note: pkgsUnstable and blesh are available here via extraSpecialArgs
+  # from your main NixOS configuration.
+  # The modules within ./modules can use them.
 }

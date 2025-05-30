@@ -15,7 +15,6 @@ in
       <home-manager/nixos>
     ];
  
-  _module.args.pkgsUnstable = pkgsUnstable;
   programs.zsh.enable = true;
 
   # Enable experimental features for flakes
@@ -27,12 +26,18 @@ in
   # boot.loader.grub.enable = true; # Example for GRUB
   # boot.loader.grub.device = "/dev/sdX"; # Or "nodev" for EFI
 
-  # programs.home-manager.enable = true;
+  # Home Manager configuration
   home-manager = {
-    users.julisa = import ./users/julisa/home.nix {
-      inherit config pkgs lib pkgsUnstable;
+    useGlobalPkgs = true;
+    useUserPackages = true;
+    
+    # Pass extra arguments to home.nix
+    extraSpecialArgs = { 
+      inherit pkgsUnstable;
       blesh = null;
     };
+    
+    users.julisa = import ./users/julisa/home.nix;
   };
 
   networking.hostName = "julixos"; # Define your desired hostname

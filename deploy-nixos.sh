@@ -56,10 +56,11 @@ fi
 
 print_header "🚀 NixOS Configuration Deployment Script"
 print_status "This script will:"
-print_status "1. Create necessary symlinks for home-manager modules"
-print_status "2. Test the NixOS configuration"
-print_status "3. Apply the new configuration"
-print_status "4. Set up development environment support"
+print_status "1. Check for latest configuration updates"
+print_status "2. Create necessary symlinks for home-manager modules"
+print_status "3. Test the NixOS configuration"
+print_status "4. Apply the new configuration"
+print_status "5. Set up development environment support"
 echo
 
 # Ask for confirmation
@@ -68,6 +69,29 @@ echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     print_status "Deployment cancelled"
     exit 0
+fi
+
+print_header "📡 Checking for updates..."
+
+# Check if we have a git repository
+if [[ -d ".git" ]]; then
+    print_status "Checking git status..."
+    
+    # Check if there are uncommitted changes
+    if ! git diff-index --quiet HEAD --; then
+        print_warning "You have uncommitted changes in the repository"
+        print_status "Consider running 'git pull' to get the latest updates before deployment"
+        read -p "Continue anyway? (y/N): " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            print_status "Deployment cancelled"
+            exit 0
+        fi
+    else
+        print_status "Repository is clean"
+    fi
+else
+    print_warning "Not a git repository - make sure you have the latest configuration"
 fi
 
 print_header "📁 Setting up module symlinks..."
