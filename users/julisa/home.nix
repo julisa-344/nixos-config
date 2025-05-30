@@ -13,12 +13,11 @@
   nixpkgs.config.allowUnfreePredicate = pkg: true;
 
   imports = [
-    ./dotfiles/home/modules/default.nix
-    # Import development modules when available
-    ./dotfiles/home/modules/app.nix
+    ./modules/default.nix
+    ./modules/app.nix
   ];
 
   # Note: pkgsUnstable and blesh are available here if they are passed as
-  # extraSpecialArgs from your main NixOS configuration (flake.nix).
+  # extraSpecialArgs from your main NixOS configuration.
   # The modules within ./modules might use them.
 }
