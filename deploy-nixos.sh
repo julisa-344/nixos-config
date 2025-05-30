@@ -58,9 +58,10 @@ print_header "🚀 NixOS Configuration Deployment Script"
 print_status "This script will:"
 print_status "1. Check for latest configuration updates"
 print_status "2. Create necessary symlinks for home-manager modules"
-print_status "3. Test the NixOS configuration"
-print_status "4. Apply the new configuration"
-print_status "5. Set up development environment support"
+print_status "3. Fix dotfiles path issues (wallpaper, screenshots, etc.)"
+print_status "4. Test the NixOS configuration"
+print_status "5. Apply the new configuration"
+print_status "6. Set up development environment support"
 echo
 
 # Ask for confirmation
@@ -94,36 +95,94 @@ else
     print_warning "Not a git repository - make sure you have the latest configuration"
 fi
 
-print_header "📁 Setting up module symlinks..."
+print_header "📁 Verifying module configuration..."
 
-# Create the modules symlink if it doesn't exist or is broken
+# Check that our custom modules directory exists
 MODULES_PATH="users/julisa/modules"
-DOTFILES_MODULES_PATH="users/julisa/dotfiles/home/modules"
 
-if [[ -L "$MODULES_PATH" ]]; then
-    print_status "Removing existing symlink: $MODULES_PATH"
-    rm "$MODULES_PATH"
-elif [[ -d "$MODULES_PATH" ]]; then
-    print_warning "Found directory at $MODULES_PATH - backing up to ${MODULES_PATH}.backup"
-    mv "$MODULES_PATH" "${MODULES_PATH}.backup"
+if [[ ! -d "$MODULES_PATH" ]]; then
+    print_error "❌ Custom modules directory not found: $MODULES_PATH"
+    print_status "This should have been created in the git repository"
+    exit 1
 fi
 
-if [[ -d "$DOTFILES_MODULES_PATH" ]]; then
-    print_status "Creating symlink: $MODULES_PATH -> $DOTFILES_MODULES_PATH"
-    ln -sf dotfiles/home/modules "$MODULES_PATH"
-    
-    # Verify the symlink works
-    if [[ -f "${MODULES_PATH}/default.nix" ]]; then
-        print_status "✅ Symlink created successfully"
-    else
-        print_error "❌ Symlink verification failed"
-        exit 1
-    fi
+if [[ -f "${MODULES_PATH}/default.nix" ]]; then
+    print_status "✅ Custom modules configuration found"
 else
+    print_error "❌ Custom modules default.nix not found"
+    exit 1
+fi
+
+# Verify dotfiles are present
+DOTFILES_MODULES_PATH="users/julisa/dotfiles/home/modules"
+if [[ ! -d "$DOTFILES_MODULES_PATH" ]]; then
     print_error "❌ Dotfiles modules directory not found: $DOTFILES_MODULES_PATH"
     print_status "Expected directory structure:"
     print_status "  users/julisa/dotfiles/home/modules/"
     exit 1
+else
+    print_status "✅ Dotfiles modules directory found"
+fi
+
+print_header "🖼️ Setting up dotfiles resources..."
+
+# Fix wallpaper symlink
+WALLPAPER_PATH="users/julisa/wallpaper"
+DOTFILES_WALLPAPER_PATH="users/julisa/dotfiles/home/wallpaper"
+
+if [[ -L "$WALLPAPER_PATH" ]]; then
+    print_status "Removing existing wallpaper symlink: $WALLPAPER_PATH"
+    rm "$WALLPAPER_PATH"
+elif [[ -d "$WALLPAPER_PATH" ]]; then
+    print_warning "Found directory at $WALLPAPER_PATH - backing up to ${WALLPAPER_PATH}.backup"
+    mv "$WALLPAPER_PATH" "${WALLPAPER_PATH}.backup"
+fi
+
+if [[ -d "$DOTFILES_WALLPAPER_PATH" ]]; then
+    print_status "Creating wallpaper symlink: $WALLPAPER_PATH -> $DOTFILES_WALLPAPER_PATH"
+    ln -sf dotfiles/home/wallpaper "$WALLPAPER_PATH"
+    
+    # Verify the wallpaper symlink works
+    if [[ -f "${WALLPAPER_PATH}/hello.png" ]]; then
+        print_status "✅ Wallpaper symlink created successfully"
+    else
+        print_error "❌ Wallpaper symlink verification failed"
+        exit 1
+    fi
+else
+    print_error "❌ Dotfiles wallpaper directory not found: $DOTFILES_WALLPAPER_PATH"
+    exit 1
+fi
+
+# Fix screenshots symlink
+SCREENSHOTS_PATH="users/julisa/screenshots"
+DOTFILES_SCREENSHOTS_PATH="users/julisa/dotfiles/home/screenshots"
+
+if [[ -L "$SCREENSHOTS_PATH" ]]; then
+    print_status "Removing existing screenshots symlink: $SCREENSHOTS_PATH"
+    rm "$SCREENSHOTS_PATH"
+elif [[ -d "$SCREENSHOTS_PATH" ]]; then
+    print_warning "Found directory at $SCREENSHOTS_PATH - backing up to ${SCREENSHOTS_PATH}.backup"
+    mv "$SCREENSHOTS_PATH" "${SCREENSHOTS_PATH}.backup"
+fi
+
+if [[ -d "$DOTFILES_SCREENSHOTS_PATH" ]]; then
+    print_status "Creating screenshots symlink: $SCREENSHOTS_PATH -> $DOTFILES_SCREENSHOTS_PATH"
+    ln -sf dotfiles/home/screenshots "$SCREENSHOTS_PATH"
+    print_status "✅ Screenshots symlink created successfully"
+else
+    print_warning "Dotfiles screenshots directory not found, creating directory"
+    mkdir -p "$DOTFILES_SCREENSHOTS_PATH"
+    ln -sf dotfiles/home/screenshots "$SCREENSHOTS_PATH"
+    print_status "✅ Screenshots directory and symlink created"
+fi
+
+# Create screenshots directory in home if needed
+HOME_SCREENSHOTS="/home/julisa/screenshots"
+if [[ ! -d "$HOME_SCREENSHOTS" ]]; then
+    print_status "Creating screenshots directory in home: $HOME_SCREENSHOTS"
+    mkdir -p "$HOME_SCREENSHOTS"
+    print_status "✅ Home screenshots directory created"
 fi
 
 print_header "🔧 Testing NixOS configuration..."
@@ -201,6 +260,8 @@ print_status "  🔧 Enhanced Nix configuration with flakes support"
 print_status "  🏠 Updated Home Manager configuration"
 print_status "  🐳 Docker support (rootless)"
 print_status "  📁 Development environment templates"
+print_status "  🖼️ Fixed dotfiles paths (wallpaper, screenshots)"
+print_status "  🔒 Safe git configuration (excludes hardcoded author info)"
 echo
 
 print_header "🚀 Next Steps:"

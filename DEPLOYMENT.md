@@ -1,6 +1,6 @@
 # NixOS Configuration Deployment Guide
 
-This guide explains how to deploy the updated NixOS configuration with development environment support.
+This guide explains how to deploy the updated NixOS configuration with development environment support and fixed dotfiles paths.
 
 ## 🚀 Quick Deployment
 
@@ -29,10 +29,11 @@ The `deploy-nixos.sh` script will:
 
 1. ✅ **Verify environment** - Checks you're on NixOS and in the right directory
 2. ✅ **Create symlinks** - Sets up the proper module structure for home-manager
-3. ✅ **Test configuration** - Builds the config to check for errors
-4. ✅ **Apply changes** - Runs `nixos-rebuild switch` to deploy
-5. ✅ **Verify tools** - Checks that essential tools are available
-6. ✅ **Set permissions** - Makes development scripts executable
+3. ✅ **Fix dotfiles paths** - Creates symlinks for wallpaper, screenshots, and other resources
+4. ✅ **Test configuration** - Builds the config to check for errors
+5. ✅ **Apply changes** - Runs `nixos-rebuild switch` to deploy
+6. ✅ **Verify tools** - Checks that essential tools are available
+7. ✅ **Set permissions** - Makes development scripts executable
 
 ## 🔧 Manual Steps (if needed)
 
@@ -44,17 +45,29 @@ cd ~/nixos-config
 ln -sf dotfiles/home/modules users/julisa/modules
 ```
 
-### 2. Test Configuration
+### 2. Fix Dotfiles Resource Paths
+```bash
+# Fix wallpaper path
+ln -sf dotfiles/home/wallpaper users/julisa/wallpaper
+
+# Fix screenshots path
+ln -sf dotfiles/home/screenshots users/julisa/screenshots
+
+# Create screenshots directory in home
+mkdir -p ~/screenshots
+```
+
+### 3. Test Configuration
 ```bash
 sudo nixos-rebuild build --show-trace
 ```
 
-### 3. Apply Configuration
+### 4. Apply Configuration
 ```bash
 sudo nixos-rebuild switch --show-trace
 ```
 
-### 4. Set Permissions
+### 5. Set Permissions
 ```bash
 chmod +x dev-environments/setup-project.sh
 ```
@@ -102,7 +115,12 @@ After successful deployment:
 ### Configuration Build Fails
 - Check the error messages carefully
 - Make sure all file paths are correct
-- Verify the symlink exists: `ls -la users/julisa/modules`
+- Verify symlinks exist: `ls -la users/julisa/`
+
+### Wallpaper or Resources Not Found
+- Check if symlinks were created: `ls -la users/julisa/wallpaper`
+- Verify the dotfiles directory exists: `ls -la users/julisa/dotfiles/home/`
+- Manually create symlinks if needed (see manual steps above)
 
 ### Tools Not Available After Deployment
 - Log out and back in
@@ -120,6 +138,19 @@ If something goes wrong, you can rollback:
 sudo nixos-rebuild switch --rollback
 ```
 
+## 🖼️ About the Dotfiles
+
+The dotfiles configuration includes:
+
+- **i3 window manager setup** with custom key bindings
+- **Wallpaper management** with feh
+- **Screenshot functionality** with maim (Mod4+p)
+- **Rofi** for application launching and utilities
+- **Polybar** for status bar
+- **Custom color schemes** and themes
+
+The deployment script automatically fixes path issues that occur when integrating borrowed dotfiles into your system structure.
+
 ## 📞 Getting Help
 
 If you encounter issues:
@@ -128,6 +159,7 @@ If you encounter issues:
 2. Look at NixOS logs: `journalctl -xe`
 3. Verify file structure matches expected layout
 4. Make sure all files are committed and pushed to git
+5. Check symlinks: `ls -la users/julisa/`
 
 ## ✅ Success Indicators
 
@@ -138,6 +170,8 @@ After successful deployment, you should have:
 - ✅ `docker --version` works (rootless)
 - ✅ Development environment scripts are executable
 - ✅ Home manager configuration loads without errors
+- ✅ Wallpaper and screenshots paths work correctly
+- ✅ i3 window manager starts without errors
 
 ---
 
