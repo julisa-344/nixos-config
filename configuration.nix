@@ -18,6 +18,9 @@ in
   _module.args.pkgsUnstable = pkgsUnstable;
   programs.zsh.enable = true;
 
+  # Enable experimental features for flakes
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Bootloader (ensure this matches your hardware/preference)
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
@@ -64,22 +67,33 @@ in
     # jack.enable = true; # If you need JACK support
   };
   
+  # Enable Docker for development (rootless)
+  virtualisation.docker.enable = true;
+  virtualisation.docker.rootless = {
+    enable = true;
+    setSocketVariable = true;
+  };
+  
   # Define your user account(s)
   users.users.julisa = { # Replace 'julisa' with your actual username
     isNormalUser = true;
     description = "Julisa";
-    extraGroups = [ "networkmanager" "wheel" "audio" "video" ]; # Add groups as needed
+    extraGroups = [ "networkmanager" "wheel" "audio" "video" "docker" ]; # Added docker group
     shell = pkgs.zsh; # Example: set default shell
     packages = with pkgs; [
-      xterm
+      # Core terminal apps
       alacritty
       firefox
+      
+      # i3 window manager packages
       i3-gaps # For i3 window manager
-      dmenu   # aaApplication launcher for i3
+      dmenu   # Application launcher for i3
       i3status # Status bar for i3
       i3lock  # Screen locker for i3
+      
+      # Essential utilities (reduced duplication)
       htop
-      zsh
+      
       # Add other essential system-wide packages for the user here
     ];
   };
@@ -96,12 +110,14 @@ in
   # Allow unfree packages if needed
   nixpkgs.config.allowUnfree = true;
 
-  # Add any custom system packages
+  # Add any custom system packages (minimal set, keep most in dev environments)
   environment.systemPackages = with pkgs; [
     git
     vim # Or your preferred editor
     wget
     curl
+    # Development tools that might be needed system-wide
+    nix-direnv # For better direnv integration
     # Add other system-wide command-line tools
   ];
 
