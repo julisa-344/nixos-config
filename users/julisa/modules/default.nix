@@ -16,7 +16,7 @@
     ../dotfiles/home/modules/rofi-power-menu.nix
     ../dotfiles/home/modules/direnv.nix
     ../dotfiles/home/modules/bash
-    ../dotfiles/home/modules/blesh
+    # ../dotfiles/home/modules/blesh  # EXCLUDED - requires external source, causing build issues
     ../dotfiles/home/modules/rice.nix
     ../dotfiles/home/modules/wezterm.nix
     ../dotfiles/home/modules/node
