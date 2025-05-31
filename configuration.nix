@@ -88,16 +88,32 @@ in
     packages = with pkgs; [
       # Core terminal apps
       alacritty
+      wezterm      # Alternative terminal (preferred by dotfiles)
       firefox
       
       # i3 window manager packages
-      i3-gaps # For i3 window manager
-      dmenu   # Application launcher for i3
-      i3status # Status bar for i3
-      i3lock  # Screen locker for i3
+      i3-gaps      # For i3 window manager
+      i3lock       # Screen locker for i3
+      polybar      # Status bar (replaces i3status)
+      rofi         # Application launcher (replaces dmenu)
+      picom        # Compositor for transparency effects
+      feh          # Wallpaper setter
       
-      # Essential utilities (reduced duplication)
+      # Audio control
+      pavucontrol  # PulseAudio volume control GUI
+      pulseaudio   # PulseAudio command line tools
+      
+      # Screenshot and utilities
+      maim         # Screenshot tool
+      xsel         # Clipboard tool
+      xclip        # Another clipboard tool
+      
+      # System monitoring
       htop
+      
+      # Fonts
+      jetbrains-mono
+      (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
       
       # Add other essential system-wide packages for the user here
     ];
