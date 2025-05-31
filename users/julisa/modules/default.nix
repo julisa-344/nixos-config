@@ -23,7 +23,7 @@
     ../dotfiles/home/modules/rust.nix
     ../dotfiles/home/modules/haskell.nix
     ../dotfiles/home/modules/font.nix
-    ../dotfiles/home/modules/i18n
+    # ../dotfiles/home/modules/i18n  # EXCLUDED - causes Asian input method activation
   ];
 
   # Our own git configuration (replacing the dotfiles one)
