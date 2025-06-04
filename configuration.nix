@@ -31,12 +31,6 @@ in
     useGlobalPkgs = true;
     useUserPackages = true;
     
-    # Pass extra arguments to home.nix
-    extraSpecialArgs = { 
-      inherit pkgsUnstable;
-      blesh = null;
-    };
-    
     users.julisa = import ./users/julisa/home.nix;
   };
 

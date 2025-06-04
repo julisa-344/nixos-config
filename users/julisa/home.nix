@@ -1,5 +1,6 @@
 # ~/nixos-config/users/julisa/home.nix
 { config, pkgs, lib, pkgsUnstable, blesh, ... }:
+
 {
   home.username = "julisa";
   home.homeDirectory = "/home/julisa";
