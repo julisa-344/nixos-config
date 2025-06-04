@@ -1,12 +1,15 @@
-# ~/nixos-config/flake.nix
+# ~/nixos-config/flake.nix - LA VERSIÓN FINAL
 {
   description = "Configuracion de NixOS para Julisa";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
-    home-manager.url = "github:nix-community/home-manager";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs"; # HM usa los paquetes de nixpkgs (24.05)
+    
+    # --- ESTA ES LA LÍNEA QUE CAMBIAMOS ---
+    home-manager.url = "github:nix-community/home-manager/release-24.05";
+    
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
   };
 
@@ -14,15 +17,14 @@
   let
     system = "x86_64-linux";
     pkgsUnstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
-    # Creamos una referencia a los paquetes de la versión estable (24.05)
     pkgsStable = import nixpkgs { inherit system; config.allowUnfree = true; };
   in
   {
     nixosConfigurations."julixos" = nixpkgs.lib.nixosSystem {
+      # ... el resto del archivo es idéntico y correcto ...
       inherit system;
       specialArgs = {
         inherit inputs pkgsUnstable;
-        # Pasamos el CÓDIGO FUENTE de blesh desde nixpkgs (estable)
         blesh = pkgsStable.blesh.src;
       };
       modules = [
@@ -33,14 +35,10 @@
           home-manager.useUserPackages = true;
           home-manager.extraSpecialArgs = {
             inherit pkgsUnstable;
-            # Pasamos el CÓDIGO FUENTE de blesh desde nixpkgs (estable)
-            # a tu home.nix
             blesh = pkgsStable.blesh.src;
           };
           home-manager.users.julisa = import ./users/julisa/home.nix;
-
           nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ];
-          # Ya no necesitamos allowUnfree aquí si está en configuration.nix o home.nix
         }
       ];
     };
