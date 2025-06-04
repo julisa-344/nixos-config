@@ -20,4 +20,6 @@
       github.copilot-chat
     ];
   };
+
+  services.mako.enable = false;
 }
