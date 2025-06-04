@@ -1,20 +1,46 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, pkgsUnstable, ... }:
 
 {
-  # Additional application configurations specific to Julisa
-  # This file can be used to override or add to the dotfiles app configurations
-  
-  # Note: Most apps are already configured in the dotfiles modules
-  # This file is here for any Julisa-specific customizations
-  
-  # Example: Add any additional packages Julisa might want
-  # home.packages = with pkgs; [
-  #   # Add any additional applications here
-  # ];
-  
-  # Example: Override any dotfiles configurations if needed
-  # programs.someapp = {
-  #   enable = true;
-  #   # custom settings
-  # };
-} 
+  home.packages = with pkgs; [
+    discord
+    element-desktop
+    firefox
+    pkgsUnstable.google-chrome
+    xfce.thunar
+    gimp
+    lxappearance
+    vscode
+    screenkey
+    vlc
+  ];
+
+  # to add SKIP_HOST_UPDATE (discord is not "pure")
+  xdg.configFile."discord/settings.json".text = ''
+    {
+      "IS_MAXIMIZED": false,
+      "IS_MINIMIZED": false,
+      "WINDOW_BOUNDS": {
+        "x": 2024,
+        "y": 52,
+        "width": 1995,
+        "height": 1071
+      },
+      "BACKGROUND_COLOR": "#202225",
+      "SKIP_HOST_UPDATE": true
+    }
+  '';
+
+  xdg.mimeApps = {
+    enable = true;
+
+    defaultApplications = {
+      "text/html" = "firefox.desktop";
+      "text/xml" = "firefox.desktop";
+      "application/xhtml_xml" = "firefox.desktop";
+      "image/webp" = "firefox.desktop";
+      "x-scheme-handler/http" = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
+      "x-scheme-handler/ftp" = "firefox.desktop";
+    };
+  };
+}
