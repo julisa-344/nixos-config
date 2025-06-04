@@ -4,7 +4,7 @@
 {
   home.username = "julisa";
   home.homeDirectory = "/home/julisa";
-  home.stateVersion = "23.11";
+  home.stateVersion = "24.05";
   nixpkgs.config.allowUnfreePredicate = pkg: true;
 
   imports = [
