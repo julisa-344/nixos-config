@@ -8,7 +8,6 @@
     home-manager.url = "github:nix-community/home-manager";
     home-manager.inputs.nixpkgs.follows = "nixpkgs"; # HM usa los paquetes de nixpkgs (24.05)
     nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
-    // Ya NO necesitamos blesh como un input separado aquí
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, nix-vscode-extensions, ... }@inputs:
