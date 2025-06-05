@@ -10,7 +10,7 @@ let
     dontBuild = true;
 
     # see https://discourse.nixos.org/t/nix-print-dev-env-command-shows-some-assinments-to-readonly-variables/20916
-    patches = [ ./blesh.patch ];
+    # patches = [ ./blesh.patch ];
 
     installPhase = ''
       mkdir -p "$out/share/lib"
