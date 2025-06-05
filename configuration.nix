@@ -5,7 +5,6 @@
   imports =
     [
       ./hardware-configuration.nix
-      # La línea "<home-manager/nixos>" ha sido ELIMINADA. El Flake se encarga de esto.
     ];
 
   programs.zsh.enable = true;
@@ -14,24 +13,36 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-  # La sección "home-manager = { ... };" ha sido ELIMINADA COMPLETAMENTE.
-  # El Flake se encarga de configurar y llamar a home.nix.
-
-  networking.hostName = "julixos"; # ¡Perfecto! Usaremos este nombre.
+  networking.hostName = "julixos";
   networking.networkmanager.enable = true;
-  time.timeZone = "America/New_York";
+  time.timeZone = "America/Lima"; # Zona horaria de Perú
 
-  i18n.defaultLocale = "en_US.UTF-8";
+  # Configuración de idioma para Perú
+  i18n.defaultLocale = "es_PE.UTF-8";
   i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_US.UTF-8";
-    LC_IDENTIFICATION = "en_US.UTF-8";
-    LC_MEASUREMENT = "en_US.UTF-8";
-    LC_MONETARY = "en_US.UTF-8";
-    LC_NAME = "en_US.UTF-8";
-    LC_NUMERIC = "en_US.UTF-8";
-    LC_PAPER = "en_US.UTF-8";
-    LC_TELEPHONE = "en_US.UTF-8";
-    LC_TIME = "en_US.UTF-8";
+    LC_ADDRESS = "es_PE.UTF-8";
+    LC_IDENTIFICATION = "es_PE.UTF-8";
+    LC_MEASUREMENT = "es_PE.UTF-8";
+    LC_MONETARY = "es_PE.UTF-8";
+    LC_NAME = "es_PE.UTF-8";
+    LC_NUMERIC = "es_PE.UTF-8";
+    LC_PAPER = "es_PE.UTF-8";
+    LC_TELEPHONE = "es_PE.UTF-8";
+    LC_TIME = "es_PE.UTF-8";
+  };
+
+  # Configuración del servidor X y teclado
+  services.xserver = {
+    enable = true;
+    displayManager.lightdm.enable = true;
+    windowManager.i3.enable = true;
+    
+    # Configuración del teclado para España/US
+    xkb = {
+      layout = "us,es";
+      variant = ",";
+      options = "grp:ctrl_space_toggle"; # Ctrl+Space para cambiar
+    };
   };
 
   # Sound
@@ -66,13 +77,6 @@
       i3lock
       htop
     ];
-  };
-
-  # Entorno gráfico
-  services.xserver = {
-    enable = true;
-    displayManager.lightdm.enable = true;
-    windowManager.i3.enable = true;
   };
 
   nixpkgs.config.allowUnfree = true;

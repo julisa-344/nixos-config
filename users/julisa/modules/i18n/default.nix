@@ -1,24 +1,62 @@
 { pkgs, lib, ... }:
 
-# inputMethod (日本語入力のみ)
-# 無変換と変換 で IME on/off
+# inputMethod para español e inglés (Perú)
+# Space + Enter para alternar entre idiomas
 {
   i18n.inputMethod.enabled = "fcitx5";
 
-  i18n.inputMethod.fcitx5.addons = [ pkgs.fcitx5-mozc ];
+  i18n.inputMethod.fcitx5.addons = with pkgs; [ 
+    fcitx5-gtk 
+    fcitx5-configtool
+  ];
 
-  # mozc の設定ファイル(バイナリ)
-  # 無変換と変換 を IME on/off に割り当てている
-  # 設定ファイルの詳細は下記を参照
-  # https://github.com/google/mozc/blob/master/docs/configurations.md#configuration-files
-  xdg.configFile."mozc/config1.db".source = ./mozc/config1.db;
+  # Configuración de fcitx5 para español/inglés
+  xdg.configFile."fcitx5/config".text = ''
+    [Hotkey]
+    # Space + Enter para activar/desactivar IME
+    TriggerKeys=
+    # Control+Space como alternativa
+    ActivateKeys=Control+space
+    # Escape para desactivar
+    DeactivateKeys=Escape
 
-  # NOTE: もし初めて switch する前にすでに ~/.mozc が存在する場合、xdg config home のほうではなく ~/.mozc が使われるためその場合は下記を使うこと
-  # NOTE 追記: やっぱこっちにも置いといたほうがよさげ
-  home.file.".mozc/config1.db".source = ./mozc/config1.db;
+    [Hotkey/EnumerateWithTriggerKeys]
+    0=True
 
-  # fcitx5 の設定ファイル
-  # 上記の mozc で設定した IME on/off がちゃんと期待通り動くようにしてある & 余計な設定やキーバインドを外してある
-  xdg.configFile."fcitx5/config".source = ./fcitx5/config;
-  xdg.configFile."fcitx5/profile".source = ./fcitx5/profile;
+    [Hotkey/AltTriggerKeys]
+    0=Shift+space
+
+    [Behavior]
+    # Mostrar información de entrada
+    ShowInputMethodInformation=True
+    # Compartir estado de entrada
+    ShareInputState=Program
+    '';
+
+  xdg.configFile."fcitx5/profile".text = ''
+    [Groups/0]
+    # Grupo por defecto
+    Name=Default
+    # Lista de métodos de entrada
+    Default Layout=us
+    DefaultIM=keyboard-us
+
+    [Groups/0/Items/0]
+    Name=keyboard-us
+    Layout=
+
+    [Groups/0/Items/1]
+    Name=keyboard-es
+    Layout=
+
+    [GroupOrder]
+    0=Default
+    '';
+
+  # Configuración adicional para el teclado
+  xdg.configFile."fcitx5/conf/keyboard.conf".text = ''
+    [Keyboard]
+    # Permitir override del layout del sistema
+    OverrideSystemKeyboard=True
+    '';
 }

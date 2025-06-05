@@ -161,8 +161,6 @@ in
           { command = "systemctl --user restart polybar"; always = true; notification = false; }
           { command = "xset s off -dpms"; always = true; notification = false; }
           { command = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"; always = true; notification = false; }
-          # Fixed monitor names: eDP-1 instead of eDP-1-1, HDMI-1 instead of HDMI-0
-          # { command = "xrandr --output eDP-1 --auto --left-of HDMI-1"; notification = false; }
           { command = "${pkgs.feh}/bin/feh --bg-scale ${config.xdg.configHome}/${wallpaperOut}"; always = true; notification = false; }
           # System tray applications
           { command = "${pkgs.networkmanagerapplet}/bin/nm-applet"; always = true; notification = false; }
@@ -172,6 +170,8 @@ in
           { command = "${pkgs.udiskie}/bin/udiskie -t"; always = true; notification = false; }
           { command = "${pkgs.copyq}/bin/copyq"; always = true; notification = false; }
           { command = "${pkgs.gammastep}/bin/gammastep-indicator"; always = true; notification = false; }
+          # NUEVO: Iniciar fcitx5 para cambio de idioma
+          { command = "fcitx5 -d"; always = true; notification = false; }
         ];
 
         keybindings =
@@ -186,14 +186,21 @@ in
             "${modifier}+q" = "kill";
 
             # Lanzadores de aplicaciones con Rofi
-            "${modifier}+d" = "exec ${config.programs.rofi.package}/bin/rofi -show drun"; # <--- COMANDO ROFI CORREGIDO
+            "${modifier}+d" = "exec ${config.programs.rofi.package}/bin/rofi -show drun";
             "${modifier}+c" = "exec ${controlsMenuScript}/bin/rofi-controls-menu";
-            "${modifier}+x" = "exec rofi -show power-menu -modi power-menu:rofi-power-menu";            "${modifier}+z" = "exec rofi -modi emoji -show emoji";
+            "${modifier}+x" = "exec rofi -show power-menu -modi power-menu:rofi-power-menu";
+            "${modifier}+z" = "exec rofi -modi emoji -show emoji";
             
             # Lanzadores de aplicaciones comunes
             "${modifier}+b" = "exec firefox";
             "${modifier}+t" = "exec wezterm";
             "${modifier}+n" = "exec ${pkgs.xfce.thunar}/bin/thunar";
+
+            # --- CAMBIO DE IDIOMA (NUEVO) ---
+            # Ctrl+Space para cambiar idioma (método principal)
+            "ctrl+space" = "exec --no-startup-id fcitx5-remote -t";
+            # Super+i como alternativa para cambio de idioma
+            "${modifier}+i" = "exec --no-startup-id fcitx5-remote -t";
 
             # --- Capturas de Pantalla ---
             # Alt + Espacio: Captura la ventana activa y la COPIA al portapapeles.
