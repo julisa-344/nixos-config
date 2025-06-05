@@ -39,10 +39,10 @@
     };
   };
 
-  # Qt theme
+  # Qt theme (CORREGIDO)
   qt = {
     enable = true;
-    platformTheme = "gtk";
+    platformTheme.name = "gtk";  # Cambiar de platformTheme = "gtk";
     style = {
       name = "adwaita-dark";
       package = pkgs.adwaita-qt;

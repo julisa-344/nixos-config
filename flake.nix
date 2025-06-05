@@ -27,15 +27,12 @@
         ./configuration.nix
         home-manager.nixosModules.home-manager
         {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.backupFileExtension = "bak";
-          home-manager.extraSpecialArgs = {
-            inherit pkgsUnstable; # pkgsUnstable will be available in home.nix <--- ARREGLADO!
-            blesh = pkgsStable.blesh.src;
+          home-manager = {
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            backupFileExtension = "backup";  # AGREGAR ESTA LÍNEA
+            users.julisa = import ./users/julisa;
           };
-          home-manager.users.julisa = import ./users/julisa/home.nix;
-          # nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ]; # Comentado
         }
       ];
     };
