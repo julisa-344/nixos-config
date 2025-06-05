@@ -325,7 +325,7 @@ in
     };
   };
 
-  # picom (efectos visuales mejorados)
+  # picom (efectos visuales - configuración simple)
   services.picom = {
     enable = true;
     fade = true;
@@ -342,37 +342,15 @@ in
       "90:class_g = 'Polybar'"
     ];
     
-    # Configuración actualizada para la nueva API
+    # Configuración básica
     settings = {
-      # Backend y optimizaciones
       backend = "glx";
-      glx-no-stencil = true;
-      glx-copy-from-front = false;
-      
-      # Mejor rendimiento
-      unredir-if-possible = true;
-      refresh-rate = 60;
       vsync = true;
-      
-      # Esquinas redondeadas (nueva sintaxis)
       corner-radius = 8;
       
-      # Blur (nueva sintaxis)
-      blur = {
-        method = "kawase";
-        strength = 8;
-        deviation = 3.0;
-        background = false;
-        background-frame = false;
-        background-fixed = false;
-      };
-      
-      # Excluir del blur
-      blur-background-exclude = [
-        "window_type = 'dock'"
-        "window_type = 'desktop'"
-        "_GTK_FRAME_EXTENTS@:c"
-      ];
+      # Blur básico (si es compatible)
+      blur-method = "kawase";
+      blur-strength = 5;
     };
   };
 
