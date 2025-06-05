@@ -335,27 +335,16 @@ in
     shadowOffsets = [(-7) (-7)];
     shadowOpacity = 0.7;
     
-    # Blur (experimental pero funciona)
-    blur = {
-      enable = true;
-      size = 8;
-      deviation = 3.0;
-    };
-    
     # Transparencia para ventanas específicas
-    opacity = {
-      rules = [
-        "90:class_g = 'Rofi'"
-        "95:class_g = 'dunst'"
-        "90:class_g = 'Polybar'"
-      ];
-    };
+    opacityRules = [
+      "90:class_g = 'Rofi'"
+      "95:class_g = 'dunst'"
+      "90:class_g = 'Polybar'"
+    ];
     
-    # Esquinas redondeadas
-    cornerRadius = 8;
-    
+    # Configuración actualizada para la nueva API
     settings = {
-      # Optimizaciones
+      # Backend y optimizaciones
       backend = "glx";
       glx-no-stencil = true;
       glx-copy-from-front = false;
@@ -364,6 +353,26 @@ in
       unredir-if-possible = true;
       refresh-rate = 60;
       vsync = true;
+      
+      # Esquinas redondeadas (nueva sintaxis)
+      corner-radius = 8;
+      
+      # Blur (nueva sintaxis)
+      blur = {
+        method = "kawase";
+        strength = 8;
+        deviation = 3.0;
+        background = false;
+        background-frame = false;
+        background-fixed = false;
+      };
+      
+      # Excluir del blur
+      blur-background-exclude = [
+        "window_type = 'dock'"
+        "window_type = 'desktop'"
+        "_GTK_FRAME_EXTENTS@:c"
+      ];
     };
   };
 
