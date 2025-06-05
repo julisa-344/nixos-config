@@ -1,4 +1,4 @@
-# ~/nixos-config/flake.nix
+# ~/nixos-config/flake.nix - COMENTARIO CORREGIDO
 {
   description = "Configuracion de NixOS para Julisa";
 
@@ -7,10 +7,7 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/release-24.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    # We still need nix-vscode-extensions if pkgsUnstable.vscode-extensions doesn't have everything
-    # or if you prefer its versions. For now, let's see if pkgsUnstable is enough.
-    # If not, we'll add this back and use its specific attributes carefully.
-    # nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions";
+    # nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions"; # Comentado por ahora
   };
 
   outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, /*nix-vscode-extensions,*/ ... }@inputs:
@@ -34,12 +31,11 @@
           home-manager.useUserPackages = true;
           home-manager.backupFileExtension = "bak";
           home-manager.extraSpecialArgs = {
-            inherit pkgsUnstable; // pkgsUnstable will be available in home.nix
+            inherit pkgsUnstable; # pkgsUnstable will be available in home.nix <--- ARREGLADO!
             blesh = pkgsStable.blesh.src;
           };
           home-manager.users.julisa = import ./users/julisa/home.nix;
-          # LA SIGUIENTE LÍNEA HA SIDO ELIMINADA/COMENTADA:
-          # nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ];
+          # nixpkgs.overlays = [ nix-vscode-extensions.overlays.default ]; # Comentado
         }
       ];
     };
