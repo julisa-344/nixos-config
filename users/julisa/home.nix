@@ -13,14 +13,11 @@
 
   programs.vscode = {
     enable = true;
-    package = pkgsUnstable.vscode; # Usamos la versión de VS Code de pkgsUnstable
-    extensions = with pkgsUnstable.vscode-extensions; [ # <--- CAMBIO IMPORTANTE AQUÍ
-      # Ahora las extensiones también vienen de pkgsUnstable
+    package = pkgsUnstable.vscode;
+    extensions = with pkgsUnstable.vscode-extensions; [
       github.copilot
       github.copilot-chat
-      # Si tenías otras extensiones, asegúrate de que estén disponibles en pkgsUnstable.vscode-extensions
     ];
   };
-
   # services.mako.enable = false; # Esta línea ya la quitaste, ¡perfecto!
 }
