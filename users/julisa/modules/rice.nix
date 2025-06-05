@@ -127,7 +127,7 @@ let
 in
 {
   # wallpaper
-  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.png;
+  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.jpg;
 
   xsession = {
     enable = true;
