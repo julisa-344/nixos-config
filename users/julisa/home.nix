@@ -14,12 +14,13 @@
   ];
 
   programs.vscode = {
-    enable = true;
-    extensions = with pkgs.vscode-marketplace; [
-      github.copilot
-      github.copilot-chat
-    ];
-  };
+  enable = true;
+  package = pkgsUnstable.vscode; # <--- Añade o modifica esta línea
+  extensions = with pkgs.vscode-marketplace; [
+    github.copilot
+    github.copilot-chat
+  ];
+};
 
   services.mako.enable = false;
 }
