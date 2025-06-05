@@ -1,9 +1,15 @@
-{ pkgs, blesh, ... }:
+{ pkgs, config, ... }:
 
 # ble.sh 用の derivation
 # https://github.com/akinomyoga/ble.sh
 
 let
+  # Obtener blesh desde specialArgs del flake principal
+  blesh = config._module.args.blesh or (builtins.fetchGit {
+    url = "https://github.com/akinomyoga/ble.sh";
+    rev = "main";
+  });
+  
   drv = pkgs.stdenvNoCC.mkDerivation {
     name = "blesh";
     src = blesh;

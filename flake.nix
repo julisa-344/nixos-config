@@ -29,7 +29,10 @@
             useGlobalPkgs = true;
             useUserPackages = true;
             backupFileExtension = "backup";
-            extraSpecialArgs = { inherit pkgsUnstable; };  # LÍNEA CLAVE AGREGADA
+            extraSpecialArgs = { 
+              inherit pkgsUnstable; 
+              blesh = pkgsStable.blesh.src;  # ← AGREGAR ESTA LÍNEA
+            };
             users.julisa = import ./users/julisa;
           };
         }
