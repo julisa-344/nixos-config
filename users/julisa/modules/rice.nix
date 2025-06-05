@@ -4,27 +4,55 @@ let
   modifier = "Mod4"; # Mod4 se corresponde con la tecla Super o Win
   modifier1 = "Mod1"; # Mod1 se corresponde con la tecla Alt
 
+  # Catppuccin Mocha Colors - NUEVA PALETA COMPLETA
   colors = rec {
-      # general
-      background = "#312f2f";
-      background-alt = "#3b4354";
-      foreground = "#F1FAEE";
-      primary = "#08D9D6";
-      secondary = "#047672";
-      alert = "#ff2e63";
-      disabled = "#707880";
+    # Catppuccin Mocha palette
+    rosewater = "f5e0dc";
+    flamingo = "f2cdcd";
+    pink = "f5c2e7";
+    mauve = "cba6f7";
+    red = "f38ba8";
+    maroon = "eba0ac";
+    peach = "fab387";
+    yellow = "f9e2af";
+    green = "a6e3a1";
+    teal = "94e2d5";
+    sky = "89dceb";
+    sapphire = "74c7ec";
+    blue = "89b4fa";
+    lavender = "b4befe";
+    text = "cdd6f4";
+    subtext1 = "bac2de";
+    subtext0 = "a6adc8";
+    overlay2 = "9399b2";
+    overlay1 = "7f849c";
+    overlay0 = "6c7086";
+    surface2 = "585b70";
+    surface1 = "45475a";
+    surface0 = "313244";
+    base = "1e1e2e";
+    mantle = "181825";
+    crust = "11111b";
+    
+    # Aliases para compatibilidad con tu configuración actual
+    background = base;
+    background-alt = surface0;
+    foreground = text;
+    primary = mauve;
+    secondary = lavender;
+    alert = red;
+    disabled = overlay0;
+    
+    # Colores específicos para rofi
+    bg0 = "${base}E6";
+    bg1 = "${surface0}80";
+    bg2 = "${mauve}E6";
+    fg0 = text;
+    fg1 = text;
+    fg2 = "${overlay0}80";
+  };
 
-      # rofi <--- ESTA SECCIÓN ES IMPORTANTE
-      bg0 = "${colors.background}E6";
-      bg1 = "${colors.background-alt}80";
-      bg2 = "${colors.primary}E6";
-      fg0 = "#DEDEDE";
-      fg1 = "${colors.foreground}";
-      fg2 = "${colors.disabled}80";
-    };
-
-
-  wallpaperOut = "wallpaper/wallpaper.png";
+  wallpaperOut = "wallpaper/hello.png";
 
   brightnessScript = pkgs.writeShellScriptBin "brightness-control" ''
     #!/bin/bash
@@ -124,10 +152,18 @@ let
     esac
   '';
 
+  rofiAppMenuScript = pkgs.writeShellScriptBin "rofi-apps-menu" ''
+    #!/usr/bin/env bash
+    rofi -show drun -display-drun "Applications" \
+         -drun-display-format "{name}" \
+         -show-icons -icon-theme "Papirus-Dark" \
+         -theme-str 'window {width: 60%; height: 70%;}'
+  '';
+
 in
 {
-  # wallpaper
-  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.jpg;
+  # wallpaper - CAMBIAR A CATPPUCCIN
+  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.png;
 
   xsession = {
     enable = true;
@@ -186,7 +222,7 @@ in
             "${modifier}+q" = "kill";
 
             # Lanzadores de aplicaciones con Rofi
-            "${modifier}+d" = "exec ${config.programs.rofi.package}/bin/rofi -show drun";
+            "${modifier}+d" = "exec ${config.programs.rofi.package}/bin/rofi -show drun -show-icons";
             "${modifier}+c" = "exec ${controlsMenuScript}/bin/rofi-controls-menu";
             "${modifier}+x" = "exec rofi -show power-menu -modi power-menu:rofi-power-menu";
             "${modifier}+z" = "exec rofi -modi emoji -show emoji";
@@ -194,7 +230,7 @@ in
             # Lanzadores de aplicaciones comunes
             "${modifier}+b" = "exec firefox";
             "${modifier}+t" = "exec wezterm";
-            "${modifier}+n" = "exec ${pkgs.xfce.thunar}/bin/thunar";
+            "${modifier}+f" = "exec ${pkgs.xfce.thunar}/bin/thunar";
 
             # --- CAMBIO DE IDIOMA (NUEVO) ---
             # Ctrl+Space para cambiar idioma (método principal)
@@ -237,37 +273,50 @@ in
             "${modifier}+Shift+Up" = "move up";
             "${modifier}+Shift+Down" = "move down";
 
+            # Control de notificaciones  
+            "${modifier}+n" = "exec --no-startup-id dunstctl close";
+            "${modifier}+Shift+n" = "exec --no-startup-id dunstctl close-all";
+            "${modifier}+ctrl+n" = "exec --no-startup-id dunstctl history-pop";
+
             # Historial del portapapeles
             "${modifier}+v" = "exec copyq toggle";
           };
 
         colors = {
           focused = {
-            background = colors.background-alt;
-            border = colors.primary;
-            childBorder = colors.primary;
-            indicator = colors.alert;
-            text = colors.primary;
+            background = "#${colors.surface0}";
+            border = "#${colors.mauve}";
+            childBorder = "#${colors.mauve}";
+            indicator = "#${colors.red}";
+            text = "#${colors.text}";
           };
 
           focusedInactive = {
-            background = colors.background-alt;
-            border = colors.background-alt;
-            childBorder = colors.secondary;
-            indicator = colors.alert;
-            text = colors.foreground;
+            background = "#${colors.surface1}";
+            border = "#${colors.surface1}";
+            childBorder = "#${colors.surface1}";
+            indicator = "#${colors.red}";
+            text = "#${colors.subtext1}";
           };
 
           unfocused = {
-            background = colors.background;
-            border = colors.background;
-            childBorder = colors.background;
-            indicator = colors.alert;
-            text = colors.foreground;
+            background = "#${colors.base}";
+            border = "#${colors.base}";
+            childBorder = "#${colors.base}";
+            indicator = "#${colors.red}";
+            text = "#${colors.overlay0}";
+          };
+
+          urgent = {
+            background = "#${colors.red}";
+            border = "#${colors.red}";
+            childBorder = "#${colors.red}";
+            indicator = "#${colors.red}";
+            text = "#${colors.base}";
           };
         };
 
-        window.border = 1;
+        window.border = 2; # Borde un poco más grueso para mejor visibilidad
 
         workspaceOutputAssign = [{ output = "eDP-1"; workspace = "10"; }];
       };
@@ -276,36 +325,71 @@ in
     };
   };
 
-  # picom (necessary for transparent window)
+  # picom (efectos visuales mejorados)
   services.picom = {
     enable = true;
     fade = true;
+    fadeSteps = [0.03 0.03];
     shadow = true;
+    shadowRadius = 12;
+    shadowOffsets = [(-7) (-7)];
+    shadowOpacity = 0.7;
+    
+    # Blur (experimental pero funciona)
+    blur = {
+      enable = true;
+      size = 8;
+      deviation = 3.0;
+    };
+    
+    # Transparencia para ventanas específicas
+    opacity = {
+      rules = [
+        "90:class_g = 'Rofi'"
+        "95:class_g = 'dunst'"
+        "90:class_g = 'Polybar'"
+      ];
+    };
+    
+    # Esquinas redondeadas
+    cornerRadius = 8;
+    
+    settings = {
+      # Optimizaciones
+      backend = "glx";
+      glx-no-stencil = true;
+      glx-copy-from-front = false;
+      
+      # Mejor rendimiento
+      unredir-if-possible = true;
+      refresh-rate = 60;
+      vsync = true;
+    };
   };
 
   # Dunst (Notificaciones) con tu tema personal completo
   services.dunst = {
     enable = true;
     iconTheme = {
-      name = "Adwaita";
-      package = pkgs.gnome3.adwaita-icon-theme;
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
       size = "32x32";
     };
     settings = {
       global = {
         monitor = 0;
         follow = "mouse";
-        geometry = "350x5-30+50";
+        geometry = "400x60-20+50";
         indicate_hidden = "yes";
         shrink = "no";
-        transparency = 20;
-        notification_height = 0;
-        separator_height = 2;
-        padding = 8;
-        horizontal_padding = 8;
+        transparency = 5;
+        notification_height = 60;
+        separator_height = 3;
+        padding = 15;
+        horizontal_padding = 15;
         frame_width = 2;
-        frame_color = "#${colors.primary}"; # Usamos el color primario
-        separator_color = "frame";
+        frame_color = "#${colors.mauve}";
+        separator_color = "#${colors.surface0}";
         sort = "yes";
         idle_threshold = 120;
         font = "JetBrainsMono Nerd Font 11";
@@ -313,6 +397,7 @@ in
         markup = "full";
         format = "<b>%s</b>\\n%b";
         alignment = "left";
+        vertical_alignment = "center";
         show_age_threshold = 60;
         word_wrap = "yes";
         ellipsize = "middle";
@@ -321,34 +406,30 @@ in
         hide_duplicate_count = false;
         show_indicators = "yes";
         icon_position = "left";
+        min_icon_size = 24;
         max_icon_size = 32;
-        sticky_history = "yes";
-        history_length = 20;
-        browser = "firefox";
-        always_run_script = true;
-        title = "Dunst";
-        class = "Dunst";
-        startup_notification = false;
-        verbosity = "mesg";
         corner_radius = 8;
         mouse_left_click = "close_current";
         mouse_middle_click = "do_action";
         mouse_right_click = "close_all";
       };
+
       urgency_low = {
-        background = "#${colors.background}";
-        foreground = "#${colors.foreground}";
-        timeout = 10;
+        background = "#${colors.base}";
+        foreground = "#${colors.text}";
+        timeout = 5;
       };
+
       urgency_normal = {
-        background = "#${colors.background}";
-        foreground = "#${colors.foreground}";
+        background = "#${colors.base}";
+        foreground = "#${colors.text}";
         timeout = 10;
       };
+
       urgency_critical = {
-        background = "#${colors.alert}";
-        foreground = "#${colors.foreground}";
-        frame_color = "#${colors.alert}";
+        background = "#${colors.red}";
+        foreground = "#${colors.base}";
+        frame_color = "#${colors.maroon}";
         timeout = 0;
       };
     };
@@ -469,33 +550,154 @@ in
       "bar/main" = {
         monitor = "eDP-1";
         width = "100%";
-        height = 30; # Un poco más delgada
-        radius = 6;  # Bordes redondeados
-        background = "#${colors.background}AA"; # Fondo con algo de transparencia (AA)
-        foreground = "#${colors.foreground}";
-        padding-left = 1; # Padding general a la izquierda
-        padding-right = 1; # Padding general a la derecha
-        module-margin = 2; # Margen entre módulos
-        font-0 = "JetBrainsMono Nerd Font:style=Regular:size=10;2";
-        # Módulos MODIFICADOS
+        height = 35;
+        radius = 8;  # Más redondeado para el look moderno
+        background = "#${colors.base}F0"; # Base con transparencia
+        foreground = "#${colors.text}";
+        padding-left = 2;
+        padding-right = 2;
+        module-margin = 2;
+        font-0 = "JetBrainsMono Nerd Font:style=Regular:size=11;3";
+        font-1 = "JetBrainsMono Nerd Font:style=Bold:size=11;3";
+        font-2 = "Font Awesome 6 Free:style=Solid:size=11;3";
+        font-3 = "Font Awesome 6 Brands:style=Regular:size=11;3";
+        
+        # Módulos actualizados
         modules-left = "i3";
-        modules-center = "date"; # Centramos la fecha
-        modules-right = "pulseaudio wlan battery tray"; # Quitamos filesystem, memory, cpu
+        modules-center = "date";
+        modules-right = "pulseaudio wlan battery tray";
         tray-position = "right";
+        tray-padding = 2;
+        tray-background = "#${colors.surface0}";
         enable-ipc = true;
+        
+        # Línea decorativa en la parte superior
+        border-top-size = 2;
+        border-top-color = "#${colors.mauve}";
       };
-      "module/i3" = { type = "internal/i3"; pin-workspaces = true; label-focused-foreground = "#${colors.primary}"; label-unfocused-foreground = "#${colors.disabled}"; label-urgent-foreground = "#${colors.alert}"; };
-      "module/date" = { type = "internal/date"; interval = 1; date = "%I:%M %p"; label = " %date%"; }; # Hora 12h
-      "module/pulseaudio" = { type = "internal/pulseaudio"; format-volume = "<ramp-volume> <label-volume>"; label-muted = " Muted"; ramp-volume-0 = ""; ramp-volume-1 = ""; };
-      "module/wlan" = { type = "internal/network"; interface-type = "wireless"; interval = 5; format-connected = " %essid%"; format-disconnected = " --"; };
+
+      # Módulos actualizados con colores Catppuccin
+      "module/i3" = {
+        type = "internal/i3";
+        pin-workspaces = true;
+        enable-click = true;
+        enable-scroll = false;
+        format = "<label-state> <label-mode>";
+        
+        label-focused = " %index% ";
+        label-focused-foreground = "#${colors.base}";
+        label-focused-background = "#${colors.mauve}";
+        label-focused-padding = 1;
+        
+        label-unfocused = " %index% ";
+        label-unfocused-foreground = "#${colors.overlay0}";
+        label-unfocused-background = "#${colors.surface0}";
+        label-unfocused-padding = 1;
+        
+        label-visible = " %index% ";
+        label-visible-foreground = "#${colors.text}";
+        label-visible-background = "#${colors.surface1}";
+        label-visible-padding = 1;
+        
+        label-urgent = " %index% ";
+        label-urgent-foreground = "#${colors.base}";
+        label-urgent-background = "#${colors.red}";
+        label-urgent-padding = 1;
+      };
+
+      "module/date" = {
+        type = "internal/date";
+        interval = 1;
+        date = " %I:%M %p";
+        date-alt = " %A, %B %d";
+        label = "%date%";
+        label-foreground = "#${colors.text}";
+        label-background = "#${colors.surface0}";
+        label-padding = 2;
+      };
+
+      "module/pulseaudio" = {
+        type = "internal/pulseaudio";
+        format-volume = "<ramp-volume> <label-volume>";
+        format-volume-foreground = "#${colors.text}";
+        format-volume-background = "#${colors.surface0}";
+        format-volume-padding = 2;
+        
+        label-muted = "󰖁 Muted";
+        label-muted-foreground = "#${colors.overlay0}";
+        label-muted-background = "#${colors.surface0}";
+        label-muted-padding = 2;
+        
+        ramp-volume-0 = "󰕿";
+        ramp-volume-1 = "󰖀";
+        ramp-volume-2 = "󰕾";
+      };
+
+      "module/wlan" = {
+        type = "internal/network";
+        interface = "wlp0s20f3"; # Ajusta según tu interfaz
+        interval = 3;
+        format-connected = "<ramp-signal> <label-connected>";
+        format-connected-foreground = "#${colors.text}";
+        format-connected-background = "#${colors.surface0}";
+        format-connected-padding = 2;
+        
+        label-connected = "%essid%";
+        
+        format-disconnected = "󰤭 Disconnected";
+        format-disconnected-foreground = "#${colors.overlay0}";
+        format-disconnected-background = "#${colors.surface0}";
+        format-disconnected-padding = 2;
+        
+        ramp-signal-0 = "󰤯";
+        ramp-signal-1 = "󰤟";
+        ramp-signal-2 = "󰤢";
+        ramp-signal-3 = "󰤥";
+        ramp-signal-4 = "󰤨";
+      };
+
       "module/battery" = {
-        type = "internal/battery"; battery = "BAT0"; adapter = "ADP1"; full-at = 99;
+        type = "internal/battery";
+        battery = "BAT0"; # Ajusta según tu batería
+        adapter = "ADP1"; # Ajusta según tu adaptador
+        full-at = 98;
+        
         format-charging = "<animation-charging> <label-charging>";
+        format-charging-foreground = "#${colors.green}";
+        format-charging-background = "#${colors.surface0}";
+        format-charging-padding = 2;
+        
         format-discharging = "<ramp-capacity> <label-discharging>";
-        label-charging = "%percentage%%"; label-discharging = "%percentage%%";
-        ramp-capacity-0 = "󰁺"; ramp-capacity-1 = "󰁻"; ramp-capacity-2 = "󰁼"; ramp-capacity-3 = "󰁽"; ramp-capacity-4 = "󰁾";
-        ramp-capacity-0-foreground = "#${colors.alert}";
-        animation-charging-0 = "󰢜"; animation-charging-1 = "󰢝"; animation-charging-framerate = 750;
+        format-discharging-foreground = "#${colors.text}";
+        format-discharging-background = "#${colors.surface0}";
+        format-discharging-padding = 2;
+        
+        format-full = "󰁹 <label-full>";
+        format-full-foreground = "#${colors.green}";
+        format-full-background = "#${colors.surface0}";
+        format-full-padding = 2;
+        
+        label-charging = "%percentage%%";
+        label-discharging = "%percentage%%";
+        label-full = "Full";
+        
+        ramp-capacity-0 = "󰁺";
+        ramp-capacity-1 = "󰁻";
+        ramp-capacity-2 = "󰁼";
+        ramp-capacity-3 = "󰁽";
+        ramp-capacity-4 = "󰁾";
+        ramp-capacity-5 = "󰁿";
+        ramp-capacity-6 = "󰂀";
+        ramp-capacity-7 = "󰂁";
+        ramp-capacity-8 = "󰂂";
+        ramp-capacity-9 = "󰁹";
+        
+        animation-charging-0 = "󰢜";
+        animation-charging-1 = "󰢝";
+        animation-charging-2 = "󰢞";
+        animation-charging-3 = "󰢟";
+        animation-charging-4 = "󰢠";
+        animation-charging-framerate = 750;
       };
       "settings" = { screenchange-reload = true; }; # pseudo-transparency lo maneja picom
     };

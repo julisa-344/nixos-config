@@ -24,6 +24,7 @@
 
     # wm
     ./rice.nix
+    ./gtk.nix  # NUEVO: Tema GTK Catppuccin
 
     # term
     ./wezterm.nix
@@ -36,7 +37,7 @@
     # font
     ./font.nix
 
-    # Keyboard Input Method / 日本語入力
+    # Keyboard Input Method
     ./i18n
   ];
 }
