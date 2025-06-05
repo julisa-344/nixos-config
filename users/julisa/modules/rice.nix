@@ -52,7 +52,7 @@ let
     fg2 = "${overlay0}80";
   };
 
-  wallpaperOut = "wallpaper/hello.png";
+  wallpaperOut = "wallpaper/hello.jpg";
 
   brightnessScript = pkgs.writeShellScriptBin "brightness-control" ''
     #!/bin/bash
@@ -163,7 +163,7 @@ let
 in
 {
   # wallpaper - CAMBIAR A CATPPUCCIN
-  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.png;
+  xdg.configFile."${wallpaperOut}".source = ../wallpaper/hello.jpg;
 
   xsession = {
     enable = true;
