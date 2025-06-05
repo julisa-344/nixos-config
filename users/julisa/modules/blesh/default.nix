@@ -6,7 +6,7 @@ let
     owner = "akinomyoga";
     repo = "ble.sh";
     rev = "v0.4.0-devel3"; # Usar una versión específica
-    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Reemplaza con el hash correcto
+    sha256 = "sha256-o15mQ6eD5AuORS777M7cZfI6zFwB0dkkzeEm+WR5sEk="; # Hash correcto del error
   });
   
   drv = pkgs.stdenvNoCC.mkDerivation {
