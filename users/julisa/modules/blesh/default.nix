@@ -1,22 +1,18 @@
 { pkgs, config, ... }:
 
-# ble.sh 用の derivation
-# https://github.com/akinomyoga/ble.sh
-
 let
-  # Obtener blesh desde specialArgs del flake principal
-  blesh = config._module.args.blesh or (builtins.fetchGit {
-    url = "https://github.com/akinomyoga/ble.sh";
-    rev = "main";
+  # Obtener blesh desde specialArgs del flake principal, con fallback a fetchFromGitHub
+  blesh = config._module.args.blesh or (pkgs.fetchFromGitHub {
+    owner = "akinomyoga";
+    repo = "ble.sh";
+    rev = "v0.4.0-devel3"; # Usar una versión específica
+    sha256 = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; # Reemplaza con el hash correcto
   });
   
   drv = pkgs.stdenvNoCC.mkDerivation {
     name = "blesh";
     src = blesh;
     dontBuild = true;
-
-    # see https://discourse.nixos.org/t/nix-print-dev-env-command-shows-some-assinments-to-readonly-variables/20916
-    # patches = [ ./blesh.patch ];
 
     installPhase = ''
       mkdir -p "$out/share/lib"
