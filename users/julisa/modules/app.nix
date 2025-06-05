@@ -9,7 +9,6 @@
     xfce.thunar
     gimp
     lxappearance
-    vscode
     screenkey
     vlc
   ];
