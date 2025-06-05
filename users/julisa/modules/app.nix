@@ -11,6 +11,17 @@
     lxappearance
     screenkey
     vlc
+    
+    # Bluetooth mejorado
+    blueman          # Gestor de Bluetooth con GUI
+    bluetuith        # TUI moderno para Bluetooth
+    
+    # Gestores de red
+    networkmanagerapplet
+    
+    # Temas Catppuccin
+    catppuccin-gtk
+    papirus-icon-theme
   ];
 
   # to add SKIP_HOST_UPDATE (discord is not "pure")

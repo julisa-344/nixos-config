@@ -62,6 +62,18 @@
     setSocketVariable = true;
   };
 
+  # Tailscale VPN
+  services.tailscale.enable = true;
+  
+  # Abrir puertos de Tailscale en el firewall
+  networking.firewall = {
+    enable = true;
+    # Confiar en la interfaz de Tailscale
+    trustedInterfaces = [ "tailscale0" ];
+    # Permitir el puerto UDP de Tailscale
+    allowedUDPPorts = [ config.services.tailscale.port ];
+  };
+
   # Definición de tu usuario
   users.users.julisa = {
     isNormalUser = true;
@@ -87,6 +99,7 @@
     wget
     curl
     nix-direnv
+    tailscale  # Agregar cliente de Tailscale
   ];
 
   system.stateVersion = "23.11";
