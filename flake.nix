@@ -1,4 +1,3 @@
-# ~/nixos-config/flake.nix - COMENTARIO CORREGIDO
 {
   description = "Configuracion de NixOS para Julisa";
 
@@ -7,10 +6,9 @@
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     home-manager.url = "github:nix-community/home-manager/release-24.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
-    # nix-vscode-extensions.url = "github:nix-community/nix-vscode-extensions"; # Comentado por ahora
   };
 
-  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, /*nix-vscode-extensions,*/ ... }@inputs:
+  outputs = { self, nixpkgs, nixpkgs-unstable, home-manager, ... }@inputs:
   let
     system = "x86_64-linux";
     pkgsUnstable = import nixpkgs-unstable { inherit system; config.allowUnfree = true; };
@@ -30,7 +28,8 @@
           home-manager = {
             useGlobalPkgs = true;
             useUserPackages = true;
-            backupFileExtension = "backup";  # AGREGAR ESTA LÍNEA
+            backupFileExtension = "backup";
+            extraSpecialArgs = { inherit pkgsUnstable; };  # LÍNEA CLAVE AGREGADA
             users.julisa = import ./users/julisa;
           };
         }

@@ -53,4 +53,13 @@
       "x-scheme-handler/ftp" = "firefox.desktop";
     };
   };
+
+  programs.vscode = {
+    enable = true;
+    package = pkgsUnstable.vscode;
+    extensions = with pkgsUnstable.vscode-extensions; [
+      github.copilot
+      github.copilot-chat
+    ];
+  };
 }
