@@ -325,34 +325,34 @@ in
     };
   };
 
-  # picom (efectos visuales - configuración simple)
-  services.picom = {
-    enable = true;
-    fade = true;
-    fadeSteps = [0.03 0.03];
-    shadow = true;
-    shadowRadius = 12;
-    shadowOffsets = [(-7) (-7)];
-    shadowOpacity = 0.7;
+  # picom (comentado temporalmente debido a problemas de compatibilidad)
+  # services.picom = {
+  #   enable = true;
+  #   fade = true;
+  #   fadeSteps = [0.03 0.03];
+  #   shadow = true;
+  #   shadowRadius = 12;
+  #   shadowOffsets = [(-7) (-7)];
+  #   shadowOpacity = 0.7;
     
-    # Transparencia para ventanas específicas
-    opacityRules = [
-      "90:class_g = 'Rofi'"
-      "95:class_g = 'dunst'"
-      "90:class_g = 'Polybar'"
-    ];
+  #   # Transparencia para ventanas específicas
+  #   opacityRules = [
+  #     "90:class_g = 'Rofi'"
+  #     "95:class_g = 'dunst'"
+  #     "90:class_g = 'Polybar'"
+  #   ];
     
-    # Configuración básica
-    settings = {
-      backend = "glx";
-      vsync = true;
-      corner-radius = 8;
+  #   # Configuración básica
+  #   settings = {
+  #     backend = "glx";
+  #     vsync = true;
+  #     corner-radius = 8;
       
-      # Blur básico (si es compatible)
-      blur-method = "kawase";
-      blur-strength = 5;
-    };
-  };
+  #     # Blur básico (si es compatible)
+  #     blur-method = "kawase";
+  #     blur-strength = 5;
+  #   };
+  # };
 
   # Dunst (Notificaciones) con tu tema personal completo
   services.dunst = {
