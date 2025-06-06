@@ -71,16 +71,19 @@ let
   '';
 
 
-  # Script para activar/desactivar la luz nocturna
+  # Script para activar/desactivar la luz nocturna (MEJORADO)
   gammastepToggleScript = pkgs.writeShellScriptBin "gammastep-toggle" ''
     #!/bin/sh
-    if pgrep -x "gammastep-indicator" > /dev/null
+    # Verificar si gammastep o gammastep-indicator están corriendo
+    if pgrep -x "gammastep" > /dev/null || pgrep -x "gammastep-indicator" > /dev/null
     then
-        killall gammastep-indicator
-        ${pkgs.libnotify}/bin/notify-send "Luz Nocturna" "Desactivada" -t 1500
+        # Matar todos los procesos de gammastep
+        killall gammastep gammastep-indicator 2>/dev/null
+        ${pkgs.libnotify}/bin/notify-send "Luz Nocturna" "Desactivada 🌕" -t 1500
     else
+        # Iniciar gammastep-indicator
         ${pkgs.gammastep}/bin/gammastep-indicator &
-        ${pkgs.libnotify}/bin/notify-send "Luz Nocturna" "Activada" -t 1500
+        ${pkgs.libnotify}/bin/notify-send "Luz Nocturna" "Activada 🌙" -t 1500
     fi
   '';
 
@@ -552,7 +555,7 @@ in
         font-3 = "Font Awesome 6 Brands:style=Regular:size=11;3";
         
         # Módulos reorganizados como en tu imagen
-        modules-left = "i3 xkeyboard";  # Workspaces + teclado
+        modules-left = "i3 xkeyboard xrandr";  # Workspaces + teclado + pantallas
         modules-center = "date";        # Hora en el centro
         modules-right = "filesystem pulseaudio wlan battery gammastep tray";
         tray-position = "right";
@@ -742,15 +745,28 @@ in
         click-left = "gnome-power-statistics";
       };
 
-      # Nuevo módulo para luz nocturna
+      # Módulo para luz nocturna (ARREGLADO)
       "module/gammastep" = {
         type = "custom/script";
-        exec = "if pgrep -x gammastep-indicator > /dev/null; then echo '󰌵 Night'; else echo '󰌶 Day'; fi";
+        exec = "if pgrep -x gammastep > /dev/null || pgrep -x gammastep-indicator > /dev/null; then echo '󰌵 Night'; else echo '󰌶 Day'; fi";
         interval = 5;
         format-foreground = "#${colors.yellow}";
         format-background = "#${colors.surface0}";
         format-padding = 2;
         click-left = "${gammastepToggleScript}/bin/gammastep-toggle";
+        click-right = "killall gammastep gammastep-indicator 2>/dev/null || ${pkgs.gammastep}/bin/gammastep-indicator &";
+      };
+
+      # Nuevo módulo para mostrar pantallas múltiples
+      "module/xrandr" = {
+        type = "custom/script";
+        exec = "xrandr --query | grep ' connected' | wc -l | awk '{print \"󰍹 \" $1}'";
+        interval = 10;
+        format-foreground = "#${colors.blue}";
+        format-background = "#${colors.surface0}";
+        format-padding = 2;
+        click-left = "arandr";
+        click-right = "autorandr --change";
       };
 
       "settings" = { screenchange-reload = true; };
@@ -780,6 +796,7 @@ in
     # ELIMINADO: pasystray (causaba iconos duplicados, polybar maneja el audio)
     udiskie
     arandr
+    autorandr
     pavucontrol
     brightnessctl
     

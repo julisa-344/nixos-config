@@ -2,6 +2,24 @@
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
 
+# Configuración mejorada del historial
+HISTSIZE=10000              # Número de comandos en memoria
+HISTFILESIZE=20000          # Número de comandos en el archivo de historial
+HISTTIMEFORMAT="[%F %T] "   # Formato de tiempo para el historial
+shopt -s histappend         # Agregar al historial en lugar de sobrescribir
+shopt -s histverify         # Verificar expansiones del historial
+shopt -s histreedit         # Permitir reeditar comandos del historial
+
+# Búsqueda inteligente en el historial
+# Ctrl+R para búsqueda reversa mejorada
+bind '"\C-r": reverse-search-history'
+# Flecha arriba/abajo para búsqueda basada en el prefijo actual
+bind '"\e[A": history-search-backward'
+bind '"\e[B": history-search-forward'
+# Alt+< y Alt+> para navegar por el historial
+bind '"\e<": beginning-of-history'
+bind '"\e>": end-of-history'
+
 # make less more friendly for non-text input files, see lesspipe(1)
 [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 

@@ -28,6 +28,7 @@
 
     # term
     ./wezterm.nix
+    ./alacritty.nix
 
     # dev
     ./node
