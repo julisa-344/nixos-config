@@ -81,7 +81,6 @@
     extraGroups = [ "networkmanager" "wheel" "audio" "video" "docker" ];
     shell = pkgs.zsh;
     packages = with pkgs; [
-      alacritty
       firefox
       i3-gaps
       dmenu

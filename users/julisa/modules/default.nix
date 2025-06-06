@@ -28,7 +28,7 @@
 
     # term
     ./wezterm.nix
-    ./alacritty.nix
+    ./warp.nix
 
     # dev
     ./node

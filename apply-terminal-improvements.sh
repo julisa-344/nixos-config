@@ -36,4 +36,4 @@ echo "  • O ejecuta 'arandr' manualmente"
 # Abrir una nueva terminal para probar
 echo ""
 echo "🧪 Abriendo nueva terminal para probar..."
-alacritty &
+warp-terminal &

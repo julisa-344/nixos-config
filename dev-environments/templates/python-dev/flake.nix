@@ -77,7 +77,7 @@
             # === Development Tools ===
             git                 # Version control
             neovim              # Text editor
-            alacritty           # Terminal emulator
+            warp-terminal       # Terminal emulator moderno con IA
             
             # === Database Tools ===
             postgresql          # PostgreSQL client

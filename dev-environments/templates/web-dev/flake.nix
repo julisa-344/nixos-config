@@ -59,7 +59,7 @@
             buildah             # Container building tool
             
             # === Terminal & Editor Tools ===
-            alacritty           # Terminal emulator
+            warp-terminal       # Terminal emulator moderno con IA
             wezterm             # Alternative terminal
             neovim              # Text editor
             vscode              # VS Code (if you prefer)

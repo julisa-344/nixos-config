@@ -181,7 +181,7 @@ in
         modifier = "Mod4"; # is Super
         defaultWorkspace = "workspace number 1";
         menu = "${rofiAppMenuScript}/bin/rofi-apps-menu";  # CORREGIR
-        terminal = "alacritty";  # CAMBIAR a alacritty
+        terminal = "warp-terminal";
         fonts = {
           names = [ "JetBrainsMono Nerd Font" ];
           size = 16.0;
@@ -213,6 +213,9 @@ in
           { command = "fcitx5 -d"; always = true; notification = false; }
         ];
 
+        # Configuración para arrastrar ventanas con el mouse
+        floating.modifier = "Mod4";  # Usar Super/Win key para arrastrar ventanas flotantes
+        
         keybindings =
           let
             # Fixed resolution for the actual eDP-1 monitor (primary at 0+0)
@@ -232,7 +235,7 @@ in
 
             # Lanzadores de aplicaciones comunes (CORREGIDO)
             "${modifier}+b" = "exec firefox";
-            "${modifier}+t" = "exec alacritty";  # Cambiar a alacritty
+            "${modifier}+t" = "exec warp-terminal";
             "${modifier}+n" = "exec ${pkgs.xfce.thunar}/bin/thunar";  # Mover thunar a Super+n
             "${modifier}+f" = "fullscreen toggle";  # Super+f para pantalla completa
 
@@ -277,7 +280,19 @@ in
             "${modifier}+Shift+Up" = "move up";
             "${modifier}+Shift+Down" = "move down";
 
-            # Control de notificaciones  
+            # --- Controles de Ventanas Flotantes ---
+            # Hacer que la ventana actual sea flotante/tiling
+            "${modifier}+Shift+space" = "floating toggle";
+            # Cambiar enfoque entre ventanas flotantes y tiling
+            "${modifier}+space" = "focus mode_toggle";
+            # Centrar ventana flotante
+            "${modifier}+Shift+c" = "move position center";
+            
+            # --- Modos de Redimensionar y Mover ---
+            "${modifier}+r" = "mode resize";
+            "${modifier}+m" = "mode move";
+
+            # Control de notificaciones
             "${modifier}+e" = "exec --no-startup-id dunstctl close";
             "${modifier}+Shift+n" = "exec --no-startup-id dunstctl close-all";
             "${modifier}+ctrl+n" = "exec --no-startup-id dunstctl history-pop";
@@ -323,9 +338,55 @@ in
         window.border = 2; # Borde un poco más grueso para mejor visibilidad
 
         workspaceOutputAssign = [{ output = "eDP-1"; workspace = "10"; }];
+        
+        # Modos para redimensionar y mover ventanas
+        modes = {
+          resize = {
+            "Left" = "resize shrink width 10 px or 10 ppt";
+            "Down" = "resize grow height 10 px or 10 ppt";
+            "Up" = "resize shrink height 10 px or 10 ppt";
+            "Right" = "resize grow width 10 px or 10 ppt";
+            "h" = "resize shrink width 10 px or 10 ppt";
+            "j" = "resize grow height 10 px or 10 ppt";
+            "k" = "resize shrink height 10 px or 10 ppt";
+            "l" = "resize grow width 10 px or 10 ppt";
+            "Return" = "mode default";
+            "Escape" = "mode default";
+          };
+          
+          move = {
+            "Left" = "move left 20px";
+            "Down" = "move down 20px";
+            "Up" = "move up 20px";
+            "Right" = "move right 20px";
+            "h" = "move left 20px";
+            "j" = "move down 20px";
+            "k" = "move up 20px";
+            "l" = "move right 20px";
+            "Return" = "mode default";
+            "Escape" = "mode default";
+          };
+        };
       };
 
-      # extraConfig = ''for_window [all] title_window_icon padding 10px'';
+      # Configuración adicional para mejorar el arrastre de ventanas
+      extraConfig = ''
+        # Permitir arrastrar ventanas flotantes manteniendo presionado Mod4 (Super/Win) + botón izquierdo del mouse
+        # Para redimensionar ventanas flotantes: Mod4 + botón derecho del mouse
+        floating_modifier Mod4
+        
+        # Hacer que ciertas ventanas sean flotantes por defecto
+        for_window [class="Pavucontrol"] floating enable
+        for_window [class="Arandr"] floating enable
+        for_window [class="Lxappearance"] floating enable
+        for_window [class="Nm-connection-editor"] floating enable
+        for_window [class="Copyq"] floating enable
+        for_window [window_role="pop-up"] floating enable
+        for_window [window_role="task_dialog"] floating enable
+        
+        # Configurar bordes para ventanas flotantes
+        for_window [floating] border pixel 2
+      '';
     };
   };
 
@@ -823,7 +884,7 @@ in
     gammastep
     playerctl
     firefox
-    alacritty              # AGREGAR alacritty
+    warp-terminal          # Terminal moderna con IA
     
     # Rofi y extensiones (CORREGIR)
     rofi-calc              # AGREGAR
