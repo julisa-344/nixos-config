@@ -45,10 +45,6 @@
     };
   };
 
-  # AGREGAR ESTAS LÍNEAS PARA DCONF
-  services.dbus.enable = true;
-  programs.dconf.enable = true;
-
   # Sound
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -105,7 +101,20 @@
     nix-direnv
     tailscale  # Agregar cliente de Tailscale
     dconf      # AGREGAR DCONF
+    glib       # para gsettings
   ];
 
   system.stateVersion = "23.11";
+
+  services = {
+    # ... otros servicios ...
+    
+    # Habilitar dconf para configuraciones GTK
+    dbus.enable = true;
+    
+    # Habilitar GNOME Keyring y servicios relacionados
+    gnome = {
+      gnome-keyring.enable = true;
+    };
+  };
 }
