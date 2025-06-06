@@ -7,7 +7,7 @@
     settings = {
       # Configuración de ventana
       window = {
-        opacity = 0.95;
+        opacity = 0.85;
         padding = {
           x = 10;
           y = 10;
