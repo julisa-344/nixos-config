@@ -102,9 +102,29 @@
     tailscale  # Agregar cliente de Tailscale
     dconf      # AGREGAR DCONF
     glib       # para gsettings
+    # Herramientas básicas del sistema
+    coreutils  # Incluye grep, ls, cat, etc.
+    gnugrep    # grep explícito
+    findutils  # find, xargs, etc.
+    gawk       # awk
+    gnused     # sed
+    util-linux # herramientas básicas de Linux
   ];
 
   system.stateVersion = "23.11";
+
+  # Configuración de gestión de energía
+  services.logind = {
+    lidSwitch = "ignore";        # No suspender al cerrar la tapa
+    powerKey = "ignore";         # No apagar con el botón de encendido
+    extraConfig = ''
+      HandlePowerKey=ignore
+      HandleSuspendKey=ignore
+      HandleHibernateKey=ignore
+      IdleAction=ignore
+      IdleActionSec=0
+    '';
+  };
 
   services = {
     # ... otros servicios ...

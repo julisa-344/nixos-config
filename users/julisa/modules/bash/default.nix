@@ -130,6 +130,7 @@
   };
 
   xdg.configFile."bash/init.bash".source = ./init.bash;
+  home.file.".inputrc".source = ./inputrc;
 
   home.sessionPath = [ "${config.home.homeDirectory}/.config/bash/bin" ];
 }

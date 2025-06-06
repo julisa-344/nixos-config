@@ -28,8 +28,11 @@ case "$TERM" in
 xterm-color | *-256color) color_prompt=yes ;;
 esac
 
+# Configurar colores para tab completion visible
+export LS_COLORS='di=1;34:fi=0:ln=1;36:pi=40;33:so=1;35:do=1;35:bd=40;33;1:cd=40;33;1:or=40;31;1:ex=1;32:*.tar=1;31'
+
 # enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
+if command -v dircolors >/dev/null 2>&1; then
   test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
   alias ls='ls --color=auto'
   alias dir='dir --color=auto'
@@ -39,6 +42,14 @@ if [ -x /usr/bin/dircolors ]; then
   alias fgrep='fgrep --color=auto'
   alias egrep='egrep --color=auto'
 fi
+
+# Configuración mejorada para tab completion
+set colored-stats on
+set colored-completion-prefix on
+set show-all-if-ambiguous on
+set show-all-if-unmodified on
+set completion-ignore-case on
+set mark-symlinked-directories on
 
 # some more ls aliases
 alias ls='lsd'
@@ -63,10 +74,23 @@ fi
 ## home manager workaround
 export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
 
-source ~/.bash_completion.d/npm-completion
+# Verificar si existe npm-completion antes de cargarlo
+if [ -f ~/.bash_completion.d/npm-completion ]; then
+  source ~/.bash_completion.d/npm-completion
+fi
 
-BLESH_PATH="$(blesh-path)"
+# Configurar BLESH solo si está disponible y no causa problemas
+if command -v blesh-path >/dev/null 2>&1; then
+  BLESH_PATH="$(blesh-path)"
+  if [ -f "$BLESH_PATH" ]; then
+    # Deshabilitar blesh temporalmente para evitar problemas con códigos de escape
+    # source $BLESH_PATH
+    echo "BLESH disponible pero deshabilitado para evitar problemas de prompt"
+  fi
+fi
 
-source $BLESH_PATH
+# Configurar variables de entorno para colores
+export TERM=xterm-256color
+export COLORTERM=truecolor
 
 # neofetch
