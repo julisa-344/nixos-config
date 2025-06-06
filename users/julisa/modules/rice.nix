@@ -840,7 +840,6 @@ in
     rofi
     rofi-calc              # AGREGAR
     rofi-emoji             # AGREGAR
-    rofi-power-menu        # AGREGAR
     
     # CORREGIR ESTAS LÍNEAS:
     gnome.gnome-calendar          # CAMBIAR: gnome-calendar → gnome.gnome-calendar
