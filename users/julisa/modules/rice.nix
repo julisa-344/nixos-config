@@ -302,7 +302,7 @@ in
             "${modifier}+Shift+Down" = "move down";
 
             # Control de notificaciones  
-            "${modifier}+n" = "exec --no-startup-id dunstctl close";
+            "${modifier}+e" = "exec --no-startup-id dunstctl close";
             "${modifier}+Shift+n" = "exec --no-startup-id dunstctl close-all";
             "${modifier}+ctrl+n" = "exec --no-startup-id dunstctl history-pop";
 
