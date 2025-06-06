@@ -160,33 +160,6 @@ let
          -theme-str 'window {width: 60%; height: 70%;}'
   '';
 
-  powerMenuScript = pkgs.writeShellScriptBin "rofi-power-menu" ''
-    #!/usr/bin/env bash
-    uptime=$(uptime -p | sed -e 's/up //g')
-    
-    # Opciones del menú
-    shutdown="⏻ Apagar"
-    reboot="🔄 Reiniciar" 
-    lock="🔒 Bloquear"
-    suspend="💤 Suspender"
-    logout="🚪 Cerrar Sesión"
-    
-    # Mostrar menú y obtener selección
-    chosen=$(echo -e "$shutdown\n$reboot\n$lock\n$suspend\n$logout" | \
-      rofi -dmenu -i -p "Sistema" \
-      -theme-str 'window {width: 25%; height: 40%;}' \
-      -mesg "Activo: $uptime")
-    
-    # Ejecutar acción según selección
-    case "$chosen" in
-      "$shutdown") systemctl poweroff ;;
-      "$reboot") systemctl reboot ;;
-      "$lock") i3lock -c 000000 ;;
-      "$suspend") systemctl suspend ;;
-      "$logout") i3-msg exit ;;
-    esac
-  '';
-
 in
 {
   # wallpaper - CAMBIAR A CATPPUCCIN
@@ -251,7 +224,7 @@ in
             # Lanzadores de aplicaciones con Rofi (CORREGIDO)
             "${modifier}+d" = "exec ${rofiAppMenuScript}/bin/rofi-apps-menu";  # Usar nuestro script
             "${modifier}+c" = "exec ${controlsMenuScript}/bin/rofi-controls-menu";
-            "${modifier}+x" = "exec ${powerMenuScript}/bin/rofi-power-menu";   # Nuevo script
+            "${modifier}+x" = "exec rofi -show power-menu -modi power-menu:${pkgs.rofi-power-menu}/bin/rofi-power-menu";   # Usar el módulo dedicado
             "${modifier}+z" = "exec rofi -modi emoji -show emoji -theme-str 'window {width: 30%; height: 50%;}'";
 
             # Lanzadores de aplicaciones comunes (CORREGIDO)
@@ -796,7 +769,6 @@ in
     rofiScriptVolume
     gammastepToggleScript
     rofiAppMenuScript      # AGREGAR
-    powerMenuScript        # AGREGAR
     
     # Utilidades del sistema y control
     bc
