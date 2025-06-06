@@ -842,7 +842,8 @@ in
     rofi-emoji             # AGREGAR
     rofi-power-menu        # AGREGAR
     
-    gnome-calendar
-    gnome.gnome-power-manager
+    # CORREGIR ESTAS LÍNEAS:
+    gnome.gnome-calendar          # CAMBIAR: gnome-calendar → gnome.gnome-calendar
+    gnome.gnome-power-manager     # MANTENER como está
   ];
 }
