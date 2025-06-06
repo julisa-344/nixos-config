@@ -809,7 +809,6 @@ in
     alacritty              # AGREGAR alacritty
     
     # Rofi y extensiones (CORREGIR)
-    rofi
     rofi-calc              # AGREGAR
     rofi-emoji             # AGREGAR
     
