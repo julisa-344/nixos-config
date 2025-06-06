@@ -106,7 +106,7 @@ let
   rofiScriptMusic = pkgs.writeShellScriptBin "rofi-music-stable" ''
     #!/usr/bin/env bash
     CMD_PLAY_PAUSE="⏯️ Play/Pause"; CMD_NEXT="⏭️ Siguiente"; CMD_PREV="⏮️ Anterior"; CMD_STOP="⏹️ Detener"
-    chosen=$(echo -e "$CMD_PLAY_PAUSE\n$CMD_NEXT\n$CMD_PREV\n$CMD_STOP" | rofi -dmenu -i -p "Música")
+    chosen=$(echo -e "$CMD_PLAY_PAUSE\n$CMD_NEXT\n$CMD_PREV\n$CMD_STOP" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Música")
     case "$chosen" in
         "$CMD_PLAY_PAUSE") ${pkgs.playerctl}/bin/playerctl play-pause ;; "$CMD_NEXT") ${pkgs.playerctl}/bin/playerctl next ;;
         "$CMD_PREV") ${pkgs.playerctl}/bin/playerctl previous ;;       "$CMD_STOP") ${pkgs.playerctl}/bin/playerctl stop ;;
@@ -118,7 +118,7 @@ let
     #!/usr/bin/env bash
     VAL_UP="⬆️ Subir"; VAL_DOWN="⬇️ Bajar"; VAL_25="🔆 25%"; VAL_50="🔆 50%"; VAL_75="🔆 75%"; VAL_100="🔆 100%"
     current_val=$(${pkgs.brightnessctl}/bin/brightnessctl -m | cut -d, -f4)
-    chosen=$(echo -e "$VAL_UP\n$VAL_DOWN\n$VAL_25\n$VAL_50\n$VAL_75\n$VAL_100" | rofi -dmenu -i -p "Brillo ($current_val)")
+    chosen=$(echo -e "$VAL_UP\n$VAL_DOWN\n$VAL_25\n$VAL_50\n$VAL_75\n$VAL_100" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Brillo ($current_val)")
     case "$chosen" in
         "$VAL_UP") ${brightnessScript}/bin/brightness-control up ;;   "$VAL_DOWN") ${brightnessScript}/bin/brightness-control down ;;
         "$VAL_25") ${brightnessScript}/bin/brightness-control 25% ;; "$VAL_50") ${brightnessScript}/bin/brightness-control 50% ;;
@@ -131,7 +131,7 @@ let
     VAL_UP="🔊 Subir"; VAL_DOWN="🔉 Bajar"; VAL_MUTE="🔇 Silenciar/Activar"
     VAL_25="🔈 25%"; VAL_50="🔉 50%"; VAL_75="🔊 75%"; VAL_100="🔊 100%"
     current_val=$(${pkgs.pamixer}/bin/pamixer --get-volume-human)
-    chosen=$(echo -e "$VAL_UP\n$VAL_DOWN\n$VAL_MUTE\n$VAL_25\n$VAL_50\n$VAL_75\n$VAL_100" | rofi -dmenu -i -p "Volumen ($current_val)")
+    chosen=$(echo -e "$VAL_UP\n$VAL_DOWN\n$VAL_MUTE\n$VAL_25\n$VAL_50\n$VAL_75\n$VAL_100" | ${pkgs.rofi}/bin/rofi -dmenu -i -p "Volumen ($current_val)")
     case "$chosen" in
         "$VAL_UP") ${volumeScript}/bin/volume-control up ;;     "$VAL_DOWN") ${volumeScript}/bin/volume-control down ;;
         "$VAL_MUTE") ${volumeScript}/bin/volume-control mute ;; "$VAL_25") ${volumeScript}/bin/volume-control set25 ;;
@@ -154,7 +154,7 @@ let
 
   rofiAppMenuScript = pkgs.writeShellScriptBin "rofi-apps-menu" ''
     #!/usr/bin/env bash
-    rofi -show drun -display-drun "Applications" \
+    exec ${pkgs.rofi}/bin/rofi -show drun -display-drun "Applications" \
          -drun-display-format "{name}" \
          -show-icons -icon-theme "Papirus-Dark" \
          -theme-str 'window {width: 60%; height: 70%;}'
@@ -201,7 +201,7 @@ in
           # System tray applications
           { command = "${pkgs.networkmanagerapplet}/bin/nm-applet"; always = true; notification = false; }
           { command = "${pkgs.blueman}/bin/blueman-applet"; always = true; notification = false; }
-          { command = "${pkgs.pasystray}/bin/pasystray"; always = true; notification = false; }
+          # ELIMINADO: pasystray para evitar iconos duplicados (polybar ya maneja el audio)
           # Auto-mount removable media
           { command = "${pkgs.udiskie}/bin/udiskie -t"; always = true; notification = false; }
           { command = "${pkgs.copyq}/bin/copyq"; always = true; notification = false; }
@@ -777,7 +777,7 @@ in
     i3lock
     networkmanagerapplet
     blueman
-    pasystray
+    # ELIMINADO: pasystray (causaba iconos duplicados, polybar maneja el audio)
     udiskie
     arandr
     pavucontrol
