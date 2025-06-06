@@ -45,6 +45,10 @@
     };
   };
 
+  # AGREGAR ESTAS LÍNEAS PARA DCONF
+  services.dbus.enable = true;
+  programs.dconf.enable = true;
+
   # Sound
   hardware.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -100,6 +104,7 @@
     curl
     nix-direnv
     tailscale  # Agregar cliente de Tailscale
+    dconf      # AGREGAR DCONF
   ];
 
   system.stateVersion = "23.11";

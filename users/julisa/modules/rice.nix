@@ -160,6 +160,33 @@ let
          -theme-str 'window {width: 60%; height: 70%;}'
   '';
 
+  powerMenuScript = pkgs.writeShellScriptBin "rofi-power-menu" ''
+    #!/usr/bin/env bash
+    uptime=$(uptime -p | sed -e 's/up //g')
+    
+    # Opciones del menú
+    shutdown="⏻ Apagar"
+    reboot="🔄 Reiniciar" 
+    lock="🔒 Bloquear"
+    suspend="💤 Suspender"
+    logout="🚪 Cerrar Sesión"
+    
+    # Mostrar menú y obtener selección
+    chosen=$(echo -e "$shutdown\n$reboot\n$lock\n$suspend\n$logout" | \
+      rofi -dmenu -i -p "Sistema" \
+      -theme-str 'window {width: 25%; height: 40%;}' \
+      -mesg "Activo: $uptime")
+    
+    # Ejecutar acción según selección
+    case "$chosen" in
+      "$shutdown") systemctl poweroff ;;
+      "$reboot") systemctl reboot ;;
+      "$lock") i3lock -c 000000 ;;
+      "$suspend") systemctl suspend ;;
+      "$logout") i3-msg exit ;;
+    esac
+  '';
+
 in
 {
   # wallpaper - CAMBIAR A CATPPUCCIN
@@ -177,8 +204,8 @@ in
       config = {
         modifier = "Mod4"; # is Super
         defaultWorkspace = "workspace number 1";
-        menu = "${config.programs.rofi.package}/bin/rofi -show drun";
-        terminal = "wezterm";
+        menu = "${rofiAppMenuScript}/bin/rofi-apps-menu";  # CORREGIR
+        terminal = "alacritty";  # CAMBIAR a alacritty
         fonts = {
           names = [ "JetBrainsMono Nerd Font" ];
           size = 16.0;
@@ -221,16 +248,17 @@ in
             # Cerrar ventana
             "${modifier}+q" = "kill";
 
-            # Lanzadores de aplicaciones con Rofi
-            "${modifier}+d" = "exec ${config.programs.rofi.package}/bin/rofi -show drun -show-icons";
+            # Lanzadores de aplicaciones con Rofi (CORREGIDO)
+            "${modifier}+d" = "exec ${rofiAppMenuScript}/bin/rofi-apps-menu";  # Usar nuestro script
             "${modifier}+c" = "exec ${controlsMenuScript}/bin/rofi-controls-menu";
-            "${modifier}+x" = "exec rofi -show power-menu -modi power-menu:rofi-power-menu";
-            "${modifier}+z" = "exec rofi -modi emoji -show emoji";
-            
-            # Lanzadores de aplicaciones comunes
+            "${modifier}+x" = "exec ${powerMenuScript}/bin/rofi-power-menu";   # Nuevo script
+            "${modifier}+z" = "exec rofi -modi emoji -show emoji -theme-str 'window {width: 30%; height: 50%;}'";
+
+            # Lanzadores de aplicaciones comunes (CORREGIDO)
             "${modifier}+b" = "exec firefox";
-            "${modifier}+t" = "exec wezterm";
-            "${modifier}+f" = "exec ${pkgs.xfce.thunar}/bin/thunar";
+            "${modifier}+t" = "exec alacritty";  # Cambiar a alacritty
+            "${modifier}+n" = "exec ${pkgs.xfce.thunar}/bin/thunar";  # Mover thunar a Super+n
+            "${modifier}+f" = "fullscreen toggle";  # Super+f para pantalla completa
 
             # --- CAMBIO DE IDIOMA (NUEVO) ---
             # Ctrl+Space para cambiar idioma (método principal)
@@ -425,10 +453,11 @@ in
   # rofi
   programs.rofi = {
     enable = true;
-    package = with pkgs; rofi.override { plugins = [ rofi-calc rofi-emoji rofi-systemd ]; };
+    plugins = with pkgs; [ rofi-calc rofi-emoji ];  # CORREGIR: mover plugins aquí
     extraConfig = {
       show-icons = true;
-      modi = "drun,emoji,calc,systemd";
+      modi = "drun,emoji,calc";  # CORREGIR: quitar systemd si no está disponible
+      icon-theme = "Papirus-Dark";
     };
 
     theme =
@@ -538,8 +567,8 @@ in
         monitor = "eDP-1";
         width = "100%";
         height = 35;
-        radius = 8;  # Más redondeado para el look moderno
-        background = "#${colors.base}F0"; # Base con transparencia
+        radius = 8;
+        background = "#${colors.base}F0";
         foreground = "#${colors.text}";
         padding-left = 2;
         padding-right = 2;
@@ -549,21 +578,25 @@ in
         font-2 = "Font Awesome 6 Free:style=Solid:size=11;3";
         font-3 = "Font Awesome 6 Brands:style=Regular:size=11;3";
         
-        # Módulos actualizados
-        modules-left = "i3";
-        modules-center = "date";
-        modules-right = "pulseaudio wlan battery tray";
+        # Módulos reorganizados como en tu imagen
+        modules-left = "i3 xkeyboard";  # Workspaces + teclado
+        modules-center = "date";        # Hora en el centro
+        modules-right = "filesystem pulseaudio wlan battery gammastep tray";
         tray-position = "right";
         tray-padding = 2;
         tray-background = "#${colors.surface0}";
         enable-ipc = true;
         
-        # Línea decorativa en la parte superior
         border-top-size = 2;
         border-top-color = "#${colors.mauve}";
+        
+        # Hacer clickeable los módulos
+        click-left = "";
+        click-middle = "";
+        click-right = "";
       };
 
-      # Módulos actualizados con colores Catppuccin
+      # Módulo i3 mejorado
       "module/i3" = {
         type = "internal/i3";
         pin-workspaces = true;
@@ -592,6 +625,20 @@ in
         label-urgent-padding = 1;
       };
 
+      # Nuevo módulo de teclado/idioma
+      "module/xkeyboard" = {
+        type = "internal/xkeyboard";
+        blacklist-0 = "num lock";
+        blacklist-1 = "caps lock";
+        format = "<label-layout>";
+        format-foreground = "#${colors.text}";
+        format-background = "#${colors.surface0}";
+        format-padding = 2;
+        label-layout = "󰌌 %layout%";
+        click-left = "fcitx5-remote -t";
+      };
+
+      # Módulo de fecha/hora clickeable
       "module/date" = {
         type = "internal/date";
         interval = 1;
@@ -601,8 +648,28 @@ in
         label-foreground = "#${colors.text}";
         label-background = "#${colors.surface0}";
         label-padding = 2;
+        # Click para mostrar calendario
+        click-left = "gnome-calendar";
+        click-right = "gsimplecal";
       };
 
+      # Módulo de sistema de archivos
+      "module/filesystem" = {
+        type = "internal/fs";
+        interval = 25;
+        mount-0 = "/";
+        format-mounted = "<ramp-capacity> <label-mounted>";
+        format-mounted-foreground = "#${colors.text}";
+        format-mounted-background = "#${colors.surface0}";
+        format-mounted-padding = 2;
+        label-mounted = "%percentage_used%%";
+        ramp-capacity-0 = "󰋊";
+        ramp-capacity-1 = "󰋋";
+        ramp-capacity-2 = "󰋌";
+        click-left = "thunar";
+      };
+
+      # Audio mejorado y clickeable
       "module/pulseaudio" = {
         type = "internal/pulseaudio";
         format-volume = "<ramp-volume> <label-volume>";
@@ -618,11 +685,18 @@ in
         ramp-volume-0 = "󰕿";
         ramp-volume-1 = "󰖀";
         ramp-volume-2 = "󰕾";
+        
+        # Hacer clickeable
+        click-left = "pavucontrol";
+        click-right = "${volumeScript}/bin/volume-control mute";
+        scroll-up = "${volumeScript}/bin/volume-control up";
+        scroll-down = "${volumeScript}/bin/volume-control down";
       };
 
+      # WiFi clickeable
       "module/wlan" = {
         type = "internal/network";
-        interface = "wlp0s20f3"; # Ajusta según tu interfaz
+        interface = "wlp0s20f3";
         interval = 3;
         format-connected = "<ramp-signal> <label-connected>";
         format-connected-foreground = "#${colors.text}";
@@ -641,12 +715,17 @@ in
         ramp-signal-2 = "󰤢";
         ramp-signal-3 = "󰤥";
         ramp-signal-4 = "󰤨";
+        
+        # Hacer clickeable
+        click-left = "nm-connection-editor";
+        click-right = "nmcli radio wifi off && sleep 2 && nmcli radio wifi on";
       };
 
+      # Batería clickeable
       "module/battery" = {
         type = "internal/battery";
-        battery = "BAT0"; # Ajusta según tu batería
-        adapter = "ADP1"; # Ajusta según tu adaptador
+        battery = "BAT0";
+        adapter = "ADP1";
         full-at = 98;
         
         format-charging = "<animation-charging> <label-charging>";
@@ -685,22 +764,39 @@ in
         animation-charging-3 = "󰢟";
         animation-charging-4 = "󰢠";
         animation-charging-framerate = 750;
+        
+        # Hacer clickeable
+        click-left = "gnome-power-statistics";
       };
-      "settings" = { screenchange-reload = true; }; # pseudo-transparency lo maneja picom
+
+      # Nuevo módulo para luz nocturna
+      "module/gammastep" = {
+        type = "custom/script";
+        exec = "if pgrep -x gammastep-indicator > /dev/null; then echo '󰌵 Night'; else echo '󰌶 Day'; fi";
+        interval = 5;
+        format-foreground = "#${colors.yellow}";
+        format-background = "#${colors.surface0}";
+        format-padding = 2;
+        click-left = "${gammastepToggleScript}/bin/gammastep-toggle";
+      };
+
+      "settings" = { screenchange-reload = true; };
     };
   };
 
 
   # Additional packages for the rice setup  
   home.packages = with pkgs; [
-    # Scripts personalizados (SIN pkgs. delante)
+    # Scripts personalizados
     brightnessScript
     volumeScript
-    controlsMenuScript # Script principal del menú
-    rofiScriptMusic    # Nuevo script para música en Rofi
-    rofiScriptBrightness # Nuevo script para brillo en Rofi
-    rofiScriptVolume   # Nuevo script para volumen en Rofi
+    controlsMenuScript
+    rofiScriptMusic
+    rofiScriptBrightness
+    rofiScriptVolume
     gammastepToggleScript
+    rofiAppMenuScript      # AGREGAR
+    powerMenuScript        # AGREGAR
     
     # Utilidades del sistema y control
     bc
@@ -721,7 +817,6 @@ in
     papirus-icon-theme
     dracula-theme
     gnome.gnome-themes-extra
-
     
     # Capturas de pantalla
     flameshot
@@ -737,9 +832,17 @@ in
     xfce.thunar
     copyq
     gammastep
-    
-    pkgs.playerctl               # Este está bien en pkgs
-  
+    playerctl
     firefox
+    alacritty              # AGREGAR alacritty
+    
+    # Rofi y extensiones (CORREGIR)
+    rofi
+    rofi-calc              # AGREGAR
+    rofi-emoji             # AGREGAR
+    rofi-power-menu        # AGREGAR
+    
+    gnome-calendar
+    gnome.gnome-power-manager
   ];
 }
