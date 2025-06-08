@@ -11,6 +11,11 @@
     lxappearance
     screenkey
     vlc
+
+    pkgsUnstable.zed-editor
+
+    xorg.xrandr
+    procps
     
     # Bluetooth mejorado
     blueman          # Gestor de Bluetooth con GUI

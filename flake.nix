@@ -33,7 +33,9 @@
               inherit pkgsUnstable; 
               blesh = pkgsStable.blesh.src;  # ← AGREGAR ESTA LÍNEA
             };
-            users.julisa = import ./users/julisa;
+            users.julisa = {
+              imports = [ ./users/julisa ]; # Correct way to import
+            }; 
           };
         }
       ];
